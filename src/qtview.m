@@ -1,5 +1,5 @@
 I = imread('images/lena512.bmp');
-S = qtdecomp(I,.3, [4, 32]);
+S = qtdecomp(I, 0.3, [16, 64]);
 blocks = repmat(uint8(0),size(S));
 
 for dim = [512 256 128 64 32 16 8 4 2 1];    
