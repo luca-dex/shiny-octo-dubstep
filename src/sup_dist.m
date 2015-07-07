@@ -1,9 +1,7 @@
-function [ rms, transf, scal ] = sup_dist( img1, img2 )
-    
-scal = length(img1) / length(img2);
+function [ rms, transf ] = sup_dist( img1, img2 )
 
 if length(img1) ~= length(img2)
-   img2 = imresize(img2, scal, 'nearest');
+   img2 = imresize(img2, 0.5, 'nearest');
 end
 
 temp = img2;
@@ -36,7 +34,6 @@ rms_arr(8) = dsh(img1, temp);
 transf = find(rms_arr - min(rms_arr) == 0);
 transf = transf(1);
 rms = rms_arr(transf);
-scal = scal*2;
 
 end
 
