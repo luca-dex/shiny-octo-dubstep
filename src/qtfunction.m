@@ -1,7 +1,8 @@
-function [ ] = qtfunction( img, position, size, split_threshold )
+function [ ] = qtfunction( img, position, size, split_threshold, p )
 
 global doms;
 global encoding;
+global img_copy;
 
 max_size = 32;
 min_size = 8;
@@ -12,10 +13,10 @@ y = position(2);
 sprintf('analyzing block (%d:%d, %d:%d)\n', x, x+size-1, y, y+size-1)
 
 if size/2 > max_size
-    qtfunction(img, [x y], size/2, split_threshold);
-    qtfunction(img, [x+size/2 y], size/2, split_threshold);
-    qtfunction(img, [x y+size/2], size/2, split_threshold);
-    qtfunction(img, [x+size/2 y+size/2], size/2, split_threshold);
+    qtfunction(img, [x+size/2 y+size/2], size/2, split_threshold, p);
+    qtfunction(img, [x y+size/2], size/2, split_threshold, p);
+    qtfunction(img, [x+size/2 y], size/2, split_threshold, p);
+    qtfunction(img, [x y], size/2, split_threshold, p);    
     return
 end
 
@@ -36,7 +37,7 @@ for i = 1:length(doms)
     
     % 1
     if rms(1) ~= 0
-        [r, t] = sup_dist(img(x:(x + size/2 - 1), y:(y + size/2 -1)), d);
+        [r, t] = sup_dist(img(x:(x + size/2 -1), y:(y + size/2 -1)), d);
 
         if r < rms(1)
             rms(1) = r;
@@ -87,30 +88,35 @@ for i = 1:4
     if rms(i) > split_threshold && size/2 > min_size
         switch i
             case 1
-                qtfunction(img, [x y], size/2, split_threshold);
+                qtfunction(img, [x y], size/2, split_threshold, p);
             case 2
-                qtfunction(img, [x+size/2 y], size/2, split_threshold);
+                qtfunction(img, [x+size/2 y], size/2, split_threshold, p);
             case 3
-                qtfunction(img, [x y+size/2], size/2, split_threshold);
+                qtfunction(img, [x y+size/2], size/2, split_threshold, p);
             case 4
-                qtfunction(img, [x+size/2 y+size/2], size/2, split_threshold);
+                qtfunction(img, [x+size/2 y+size/2], size/2, split_threshold, p);
         end
     else
         switch i
             case 1
                 encoding = [encoding; [x y size/2, doms_ind(i) ts(i)]];
-                sprintf('\t\tprocessed block (%d:%d), size = %d\n', x, y, size)
+                img_copy(x:(x + size/2 -1), y:(y + size/2 -1)) = 1;
+                sprintf('\tUP LEFT processed block (%d:%d), size = %d, rms = %d\n', x, y, size, rms(i))
             case 2
                 encoding = [encoding; [x+size/2 y size/2, doms_ind(i) ts(i)]];
-                sprintf('\t\tprocessed block (%d:%d), size = %d\n', x+size/2, y, size)
+                img_copy((x + size/2):(x + size -1), y:(y + size/2 -1)) = 1;
+                sprintf('\tUP RIGHT processed block (%d:%d), size = %d, rms = %d\n', x+size/2, y, size, rms(i))
             case 3
                 encoding = [encoding; [x y+size/2 size/2, doms_ind(i) ts(i)]];
-                sprintf('\t\tprocessed block (%d:%d), size = %d\n', x, y+size/2, size)
+                img_copy(x:(x + size/2 -1), (y + size/2):(y + size -1)) = 1;
+                sprintf('\tDOWN LEFT processed block (%d:%d), size = %d, rms = %d\n', x, y+size/2, size, rms(i))
             case 4
                 encoding = [encoding; [x+size/2 y+size/2 size/2, doms_ind(i) ts(i)]];
-                sprintf('\t\tprocessed block (%d:%d), size = %d\n', x+size/2, y+size/2, size)
+                img_copy((x + size/2):(x + size -1), (y + size/2):(y + size -1)) = 1;
+                sprintf('\tDOWN RIGHT processed block (%d:%d), size = %d, rms = %d\n', x+size/2, y+size/2, size, rms(i))
         end
-
+        set(p, 'CData', img_copy);
+        drawnow;
         return
     end
     

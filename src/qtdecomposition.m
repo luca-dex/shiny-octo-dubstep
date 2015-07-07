@@ -1,6 +1,9 @@
 function [ ] = qtdecomposition( img )
-
-qtfunction(img, [1, 1], length(img), 10);
+global img_copy;
+img_copy = img;
+p = imshow(img, 'Border', 'tight');
+drawnow;
+qtfunction(img, [1, 1], length(img), 10, p);
 
 
 
