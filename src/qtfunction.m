@@ -131,11 +131,14 @@ end
 
 function [s, o] = least_squared_params(img1, img2)
 
-if length(img1) ~= length(img2)
+if 2*length(img1) == length(img2)
+    img2 = imresize(img2, 0.5, 'nearest');
+else
     s = 0;
     o = 0;
     return
 end
+    
 
 n = length(img1);
 a = reshape(img1, [1, n*n]);
