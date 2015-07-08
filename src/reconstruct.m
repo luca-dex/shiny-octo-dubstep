@@ -4,10 +4,12 @@ for i=1:length(encoding)
     x = temp(1);
     y = temp(2);
     s = temp(3);
-    id = temp(4);
-    r = temp(5);
+    xd = temp(4);
+    yd = temp(5);
+    sd = temp(6);
+    r = temp(7);
     
-    block = doms{id,1};
+    block = i2(xd:xd+sd-1, yd:yd+sd-1);
     switch r
         case 1
             block = block;

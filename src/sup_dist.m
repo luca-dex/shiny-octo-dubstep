@@ -1,7 +1,8 @@
 function [ rms, transf ] = sup_dist( img1, img2 )
 
 if length(img1) ~= length(img2)
-   img2 = imresize(img2, 0.5, 'nearest');
+   %img2 = imresize(img2, 0.5, 'nearest');
+   img2 = uint8(scale_image(img2));
 end
 
 temp = img2;
