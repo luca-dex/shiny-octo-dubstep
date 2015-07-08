@@ -4,8 +4,8 @@ global doms;
 global encoding;
 global img_copy;
 
-max_size = 128;
-min_size = 16;
+max_size = 32;
+min_size = 4;
 
 x = position(1);
 y = position(2);
