@@ -7,7 +7,7 @@ for i=1:length(encoding)
     id = temp(4);
     r = temp(5);
     
-    block = doms{id};
+    block = doms{id,1};
     switch r
         case 1
             block = block;

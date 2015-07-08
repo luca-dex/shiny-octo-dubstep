@@ -87,7 +87,7 @@ end
 if rms(1) > split_threshold && size/2 > min_size
     qtfunction(img, [x y], size/2, split_threshold, p);
 else
-    img1 = img(x:(x + size/2 -1), y:(y + size/2 -1);
+    img1 = img(x:(x + size/2 -1), y:(y + size/2 -1));
     [s, o] = least_squared_params(img1, d);
     encoding = [encoding; [x y size/2 doms{doms_ind(1),2} ts(1) s o]];
     img_copy(x:(x + size/2 -1), y:(y + size/2 -1)) = 1;
