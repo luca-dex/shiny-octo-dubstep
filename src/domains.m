@@ -8,6 +8,8 @@ d = {1000,2};
 dim = length(image);
 index = 1;
 
+range_sizes = sort(range_sizes, 'descend');
+
 for size = range_sizes
     step = size / l;
     for i = 1:step:(dim-size)

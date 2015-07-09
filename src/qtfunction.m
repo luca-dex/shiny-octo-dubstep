@@ -5,7 +5,7 @@ global encoding;
 global img_copy;
 
 max_size = 32;
-min_size = 8;
+min_size = 2;
 
 x = position(1);
 y = position(2);
@@ -145,6 +145,7 @@ a = single(reshape(img1, [1, n*n]));
 b = single(reshape(img2, [1, n*n]));
 
 s = ( n * dot(a, b) - sum(a)*sum(b) ) / ( n * sum(a.^2) - sum(a)^2 );
+s = min(s, 1);
 o = ( sum(b) - s*sum(a) ) / n;
 
 end
