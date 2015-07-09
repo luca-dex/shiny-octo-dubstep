@@ -6,8 +6,8 @@ end
 
 rms_arr = zeros(1,8);
 
-for i = 1:8
-    rms_arr(i) = dsh(img1, rotate_image(img2, i));
+for i = 0:7
+    rms_arr(8-i) = dsh(img1, rotate_image(img2, 8-i));
 end
 
 transf = find(rms_arr - min(rms_arr) == 0, 1);
