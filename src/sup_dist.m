@@ -1,43 +1,27 @@
 function [ rms, transf ] = sup_dist( img1, img2 )
 
 if length(img1) ~= length(img2)
-   %img2 = imresize(img2, 0.5, 'nearest');
-   img2 = uint8(scale_image(img2));
+    img2 = scale_image(img2);
 end
 
-temp = img2;
+rms_arr = zeros(1,8);
 
-rms_arr = zeros(1, 8);
+for i = 1:8
+    rms_arr(i) = dsh(img1, rotate_image(img2, i));
+end
 
-rms_arr(1) = dsh(img1, temp);
-
-temp = rot90(temp);
-rms_arr(2) = dsh(img1, temp);
-
-temp = rot90(temp);
-rms_arr(3) = dsh(img1, temp);
-
-temp = rot90(temp);
-rms_arr(4) = dsh(img1, temp);
-
-temp = flipud(img2);
-rms_arr(5) = dsh(img1, temp);
-
-temp = rot90(temp);
-rms_arr(6) = dsh(img1, temp);
-
-temp = rot90(temp);
-rms_arr(7) = dsh(img1, temp);
-
-temp = rot90(temp);
-rms_arr(8) = dsh(img1, temp);
-
-transf = find(rms_arr - min(rms_arr) == 0);
-transf = transf(1);
+transf = find(rms_arr - min(rms_arr) == 0, 1);
 rms = rms_arr(transf);
 
 end
 
 function [ rms ] = dsh(img1, img2)
-    rms = max(max(abs((img1 - img2) + (img2 - img1))));
+
+[s, o] = least_squared_params(img1, img2);
+
+n = length(img1)^2;
+a = single(reshape(img2, [1, n]));
+b = single(reshape(img1, [1, n]));
+
+rms = sqrt(( sum(b.^2) + s * (s*sum(a.^2) - 2*dot(a,b) + 2*o*sum(a)) + o*(n*o - 2*sum(b)) ) / n);
 end

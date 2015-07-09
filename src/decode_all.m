@@ -1,8 +1,8 @@
-img = ones(length(i2)) * 150;
+imgd = ones(length(img)) * 150;
 
 for i=1:15
-    img = uint8(decode_step(img));
-    imshow(uint8(ones(length(i2)))*255 - img);
+    imgd = uint8(decode_step(imgd));
+    imshow(uint8(imgd));
     waitforbuttonpress;
 end
 
