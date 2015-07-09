@@ -5,7 +5,7 @@ global doms;
 global doms2;
 global encoding;
 
-img = imread('images/');
+img = imread('images/lena512.bmp');
 
 dom_range = [8, 16, 32];
 
