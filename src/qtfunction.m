@@ -1,11 +1,8 @@
-function [ ] = qtfunction( img, position, size, split_threshold, p )
+function [ ] = qtfunction( img, position, size, split_threshold, p, min_size, max_size )
 
 global doms;
 global encoding;
 global img_copy;
-
-max_size = 32;
-min_size = 2;
 
 x = position(1);
 y = position(2);
@@ -13,10 +10,10 @@ y = position(2);
 sprintf('analyzing block (%d:%d, %d:%d)\n', x, x+size-1, y, y+size-1)
 
 if size/2 > max_size
-    qtfunction(img, [x y], size/2, split_threshold, p);
-    qtfunction(img, [x+size/2 y], size/2, split_threshold, p);
-    qtfunction(img, [x y+size/2], size/2, split_threshold, p);
-    qtfunction(img, [x+size/2 y+size/2], size/2, split_threshold, p);
+    qtfunction(img, [x y], size/2, split_threshold, p, min_size, max_size);
+    qtfunction(img, [x+size/2 y], size/2, split_threshold, p, min_size, max_size);
+    qtfunction(img, [x y+size/2], size/2, split_threshold, p, min_size, max_size);
+    qtfunction(img, [x+size/2 y+size/2], size/2, split_threshold, p, min_size, max_size);
     return
 end
 
@@ -85,7 +82,7 @@ for i = 1:length(doms)
 end
 
 if rms(1) > split_threshold && size/2 > min_size
-    qtfunction(img, [x y], size/2, split_threshold, p);
+    qtfunction(img, [x y], size/2, split_threshold, p, min_size, max_size);
 else
     img1 = img(x:(x + size/2 -1), y:(y + size/2 -1));
     [s, o] = least_squared_params(img1, doms{doms_ind(1),1});
@@ -95,7 +92,7 @@ else
 end
 
 if rms(2) > split_threshold && size/2 > min_size
-    qtfunction(img, [x+size/2 y], size/2, split_threshold, p);
+    qtfunction(img, [x+size/2 y], size/2, split_threshold, p, min_size, max_size);
 else
     img1 = img((x + size/2):(x+size-1), y:(y + size/2 -1));
     [s, o] = least_squared_params(img1, doms{doms_ind(2),1});
@@ -105,7 +102,7 @@ else
 end
 
 if rms(3) > split_threshold && size/2 > min_size
-    qtfunction(img, [x y+size/2], size/2, split_threshold, p);
+    qtfunction(img, [x y+size/2], size/2, split_threshold, p, min_size, max_size);
 else
     img1 = img(x:(x + size/2 - 1), (y + size/2):(y+size-1));
     [s, o] = least_squared_params(img1, doms{doms_ind(3),1});
@@ -115,7 +112,7 @@ else
 end
 
 if rms(4) > split_threshold && size/2 > min_size
-    qtfunction(img, [x+size/2 y+size/2], size/2, split_threshold, p);
+    qtfunction(img, [x+size/2 y+size/2], size/2, split_threshold, p, min_size, max_size);
 else
     img1 = img((x + size/2):(x+size-1) , (y + size/2):(y+size-1));
     [s, o] = least_squared_params(img1, doms{doms_ind(4),1});
