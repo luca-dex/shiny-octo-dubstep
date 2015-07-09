@@ -1,4 +1,4 @@
-function [ d ] = domains( image, range_sizes, l )
+function [ d, d2 ] = domains( image, range_sizes, l )
 
 if nargin < 3
     l = 2;
@@ -22,6 +22,12 @@ for size = range_sizes
     end
 end
 
+d2 = cell(length(d), 2);
+
+for i=1:length(d2)
+    d2(i, 2) = d(i, 2);
+    d2(i, 1) = {scale_image(d{i, 1})};
+end
 
 end
 

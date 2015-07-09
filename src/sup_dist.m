@@ -1,8 +1,6 @@
 function [ rms, transf ] = sup_dist( img1, img2 )
 
-if 2*length(img1) == length(img2)
-    img2 = scale_image(img2);
-else
+if length(img1) ~= length(img2)
     error('sup_dist: PORCODIO');
 end
 

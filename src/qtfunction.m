@@ -1,6 +1,6 @@
 function [ ] = qtfunction( img, position, size, split_threshold, p, min_size, max_size )
 
-global doms;
+global doms2;
 global encoding;
 global img_copy;
 
@@ -21,11 +21,11 @@ rms = repmat(+Inf, [1 4]);
 ts = zeros(1, 4);
 doms_ind = zeros(1, 4);
 
-for i = 1:length(doms)
+for i = 1:length(doms2)
     
-    d = doms{i,1};
+    d = doms2{i,1};
     
-    if length(d) ~= size
+    if length(d) ~= size/2
         continue
     end
     
@@ -87,8 +87,8 @@ if rms(1) > split_threshold && size/2 > min_size
     qtfunction(img, [x y], size/2, split_threshold, p, min_size, max_size);
 else
     img1 = img(x:(x + size/2 -1), y:(y + size/2 -1));
-    [s, o] = least_squared_params(img1, doms{doms_ind(1),1});
-    encoding = [encoding; [x y size/2 doms{doms_ind(1),2} ts(1) s o]];
+    [s, o] = least_squared_params(img1, doms2{doms_ind(1),1});
+    encoding = [encoding; [x y size/2 doms2{doms_ind(1),2} ts(1) s o]];
     img_copy(x:(x + size/2 -1), y:(y + size/2 -1)) = 1;
     sprintf('\tUP LEFT processed block (%d:%d), size = %d, rms = %d\n', x, y, size, rms(1))
 end
@@ -97,8 +97,8 @@ if rms(2) > split_threshold && size/2 > min_size
     qtfunction(img, [x+size/2 y], size/2, split_threshold, p, min_size, max_size);
 else
     img1 = img((x + size/2):(x+size-1), y:(y + size/2 -1));
-    [s, o] = least_squared_params(img1, doms{doms_ind(2),1});
-    encoding = [encoding; [x+size/2 y size/2 doms{doms_ind(2),2} ts(2) s o]];
+    [s, o] = least_squared_params(img1, doms2{doms_ind(2),1});
+    encoding = [encoding; [x+size/2 y size/2 doms2{doms_ind(2),2} ts(2) s o]];
     img_copy((x + size/2):(x + size -1), y:(y + size/2 -1)) = 1;
     sprintf('\tUP RIGHT processed block (%d:%d), size = %d, rms = %d\n', x+size/2, y, size, rms(2))
 end
@@ -107,8 +107,8 @@ if rms(3) > split_threshold && size/2 > min_size
     qtfunction(img, [x y+size/2], size/2, split_threshold, p, min_size, max_size);
 else
     img1 = img(x:(x + size/2 - 1), (y + size/2):(y+size-1));
-    [s, o] = least_squared_params(img1, doms{doms_ind(3),1});
-    encoding = [encoding; [x y+size/2 size/2, doms{doms_ind(3),2} ts(3) s o]];
+    [s, o] = least_squared_params(img1, doms2{doms_ind(3),1});
+    encoding = [encoding; [x y+size/2 size/2, doms2{doms_ind(3),2} ts(3) s o]];
     img_copy(x:(x + size/2 -1), (y + size/2):(y + size -1)) = 1;
     sprintf('\tDOWN LEFT processed block (%d:%d), size = %d, rms = %d\n', x, y+size/2, size, rms(3))
 end
@@ -117,8 +117,8 @@ if rms(4) > split_threshold && size/2 > min_size
     qtfunction(img, [x+size/2 y+size/2], size/2, split_threshold, p, min_size, max_size);
 else
     img1 = img((x + size/2):(x+size-1) , (y + size/2):(y+size-1));
-    [s, o] = least_squared_params(img1, doms{doms_ind(4),1});
-    encoding = [encoding; [x+size/2 y+size/2 size/2, doms{doms_ind(4),2} ts(4) s o]];
+    [s, o] = least_squared_params(img1, doms2{doms_ind(4),1});
+    encoding = [encoding; [x+size/2 y+size/2 size/2, doms2{doms_ind(4),2} ts(4) s o]];
     img_copy((x + size/2):(x + size -1), (y + size/2):(y + size -1)) = 1;
     sprintf('\tDOWN RIGHT processed block (%d:%d), size = %d, rms = %d\n', x+size/2, y+size/2, size, rms(4))
 end
