@@ -23,4 +23,4 @@ for i=1:length(encoding)
     imgr(xr:xr+sr-1, yr:yr+sr-1) = b;
 end
 
-imgr = uint8(imgr);
+imshow(uint8(imgr));

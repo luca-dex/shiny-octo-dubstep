@@ -1,13 +1,15 @@
 function [ rms, transf ] = sup_dist( img1, img2 )
 
-if length(img1) ~= length(img2)
+if 2*length(img1) == length(img2)
     img2 = scale_image(img2);
+else
+    error('sup_dist: PORCODIO');
 end
 
 rms_arr = zeros(1,8);
 
-for i = 0:7
-    rms_arr(8-i) = dsh(img1, rotate_image(img2, 8-i));
+for i = 1:8
+    rms_arr(i) = dsh(img1, rotate_image(img2, i));
 end
 
 transf = find(rms_arr - min(rms_arr) == 0, 1);
@@ -24,4 +26,6 @@ a = single(reshape(img2, [1, n]));
 b = single(reshape(img1, [1, n]));
 
 rms = sqrt(( sum(b.^2) + s * (s*sum(a.^2) - 2*dot(a,b) + 2*o*sum(a)) + o*(n*o - 2*sum(b)) ) / n);
+
+
 end

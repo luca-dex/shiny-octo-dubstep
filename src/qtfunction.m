@@ -35,12 +35,13 @@ for i = 1:length(doms)
     % 1
     if rms(1) > 0
         [r, t] = sup_dist(img(x:(x + size/2 -1), y:(y + size/2 -1)), d);
+
+        
         
         if r < rms(1)
             rms(1) = r;
             ts(1) = t;
             doms_ind(1) = i;
-            [r, t]
         end
     end
     
