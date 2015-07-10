@@ -36,7 +36,7 @@ parfor i=1:4
             x = length(img) / 2 + 1;
             y = length(img) / 2 + 1;
     end
-    partial_enc = qtfunction(img, [x, y], length(img)/2, 20, min_range, max_range, doms2, 4);
+    partial_enc = qtfunction(img, [x, y], length(img)/2, 10, min_range, max_range, doms2, 4);
     display '--------------------finito'
     parfor_enc = [parfor_enc ;partial_enc];
 end

@@ -34,11 +34,11 @@ sprintf('real domain size: %d\n', counter-1)
 
 sprintf('restricted domain size: %d\n', index-1)
 
-d2 = cell(length(d), 2);
+d2 = {1000, 2};
 
 index2 = 1;
 
-for i=1:length(d2)
+for i=1:length(d)
     imres2 = scale_image(d{i, 1});
     if check_equals(d2, imres2, index2-1)
         continue;
