@@ -5,7 +5,7 @@ global doms;
 global doms2;
 global encoding;
 
-img = imread('images/FullMoon2010.bmp');
+img = imread('images/girl.bmp');
 
 dom_range = [8, 16, 32];
 
@@ -36,8 +36,8 @@ parfor i=1:4
             x = length(img) / 2 + 1;
             y = length(img) / 2 + 1;
     end
-    partial_enc = qtfunction(img, [x, y], length(img)/2, 10, min_range, max_range, doms2);
-    display '--------------------finito';
+    partial_enc = qtfunction(img, [x, y], length(img)/2, 15, min_range, max_range, doms2);
+    display '--------------------finito'
     parfor_enc = [parfor_enc ;partial_enc];
 end
 
