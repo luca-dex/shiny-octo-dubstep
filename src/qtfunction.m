@@ -1,4 +1,4 @@
-function [ partial_enc ] = qtfunction( img, position, size, split_threshold, min_size, max_size, doms )
+function [ partial_enc ] = qtfunction( img, position, size, split_threshold, min_size, max_size, doms, min_rms )
 
 global img_copy;
 
@@ -8,10 +8,10 @@ y = position(2);
 partial_enc = [];
 
 if size/2 > max_size
-    a = qtfunction(img, [x y], size/2, split_threshold, min_size, max_size, doms);
-    b = qtfunction(img, [x+size/2 y], size/2, split_threshold, min_size, max_size, doms);
-    c = qtfunction(img, [x y+size/2], size/2, split_threshold, min_size, max_size, doms);
-    d = qtfunction(img, [x+size/2 y+size/2], size/2, split_threshold, min_size, max_size, doms);
+    a = qtfunction(img, [x y], size/2, split_threshold, min_size, max_size, doms, min_rms);
+    b = qtfunction(img, [x+size/2 y], size/2, split_threshold, min_size, max_size, doms, min_rms);
+    c = qtfunction(img, [x y+size/2], size/2, split_threshold, min_size, max_size, doms, min_rms);
+    d = qtfunction(img, [x+size/2 y+size/2], size/2, split_threshold, min_size, max_size, doms, min_rms);
     partial_enc = [a; b; c; d;];
     return
 end
@@ -32,7 +32,7 @@ for i = 1:length(doms)
     % |3|4|
     
     % 1
-    if rms(1) > 0
+    if rms(1) > min_rms
         [r, t] = sup_dist(img(x:(x + size/2 -1), y:(y + size/2 -1)), d);
 
         
@@ -45,7 +45,7 @@ for i = 1:length(doms)
     end
     
     % 2
-    if rms(2) > 0
+    if rms(2) > min_rms
         [r, t] = sup_dist(img((x + size/2):(x+size-1), y:(y + size/2 -1)), d);
         
         
@@ -57,7 +57,7 @@ for i = 1:length(doms)
     end
     
     % 3
-    if rms(3) > 0
+    if rms(3) > min_rms
         [r, t] = sup_dist(img(x:(x + size/2 - 1), (y + size/2):(y+size-1)), d);
         
         
@@ -69,7 +69,7 @@ for i = 1:length(doms)
     end
     
     % 4
-    if rms(4) > 0
+    if rms(4) > min_rms
         [r, t] = sup_dist(img((x + size/2):(x+size-1) , (y + size/2):(y+size-1)) , d);
         
         if r < rms(4)
@@ -83,7 +83,7 @@ for i = 1:length(doms)
 end
 
 if rms(1) > split_threshold && size/2 > min_size
-    partial_enc = [partial_enc; qtfunction(img, [x y], size/2, split_threshold, min_size, max_size, doms)];
+    partial_enc = [partial_enc; qtfunction(img, [x y], size/2, split_threshold, min_size, max_size, doms, min_rms)];
 else
     img1 = img(x:(x + size/2 -1), y:(y + size/2 -1));
     [s, o] = least_squared_params(img1, doms{doms_ind(1),1});
@@ -92,7 +92,7 @@ else
 end
 
 if rms(2) > split_threshold && size/2 > min_size
-    partial_enc = [partial_enc; qtfunction(img, [x+size/2 y], size/2, split_threshold, min_size, max_size, doms)];
+    partial_enc = [partial_enc; qtfunction(img, [x+size/2 y], size/2, split_threshold, min_size, max_size, doms, min_rms)];
 else
     img1 = img((x + size/2):(x+size-1), y:(y + size/2 -1));
     [s, o] = least_squared_params(img1, doms{doms_ind(2),1});
@@ -101,7 +101,7 @@ else
 end
 
 if rms(3) > split_threshold && size/2 > min_size
-    partial_enc = [partial_enc; qtfunction(img, [x y+size/2], size/2, split_threshold, min_size, max_size, doms)];
+    partial_enc = [partial_enc; qtfunction(img, [x y+size/2], size/2, split_threshold, min_size, max_size, doms, min_rms)];
 else
     img1 = img(x:(x + size/2 - 1), (y + size/2):(y+size-1));
     [s, o] = least_squared_params(img1, doms{doms_ind(3),1});
@@ -110,7 +110,7 @@ else
 end
 
 if rms(4) > split_threshold && size/2 > min_size
-    partial_enc = [partial_enc; qtfunction(img, [x+size/2 y+size/2], size/2, split_threshold, min_size, max_size, doms)];
+    partial_enc = [partial_enc; qtfunction(img, [x+size/2 y+size/2], size/2, split_threshold, min_size, max_size, doms, min_rms)];
 else
     img1 = img((x + size/2):(x+size-1) , (y + size/2):(y+size-1));
     [s, o] = least_squared_params(img1, doms{doms_ind(4),1});

@@ -5,9 +5,9 @@ global doms;
 global doms2;
 global encoding;
 
-img = imread('images/girl.bmp');
+img = imread('images/shower.bmp');
 
-dom_range = [8, 16, 32];
+dom_range = [4, 8, 16, 32];
 
 [doms, doms2] = domains(img, dom_range, 1);
 
@@ -36,7 +36,7 @@ parfor i=1:4
             x = length(img) / 2 + 1;
             y = length(img) / 2 + 1;
     end
-    partial_enc = qtfunction(img, [x, y], length(img)/2, 15, min_range, max_range, doms2);
+    partial_enc = qtfunction(img, [x, y], length(img)/2, 20, min_range, max_range, doms2, 4);
     display '--------------------finito'
     parfor_enc = [parfor_enc ;partial_enc];
 end
