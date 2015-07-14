@@ -5,16 +5,16 @@ global doms;
 global doms2;
 global encoding;
 
-img = imread('images/banana.bmp');
+img = imread('images/hole.bmp');
 
-dom_range = [8, 16, 32];
+dom_range = [16, 32, 64];
 
 [doms, doms2] = domains(img, dom_range, 1);
 
 min_range = dom_range(1) / 2;
 max_range = dom_range(length(dom_range)) / 2;
-min_rms = 3;
-max_rms = 8;
+min_rms = 0;
+max_rms = 20;
 
 parpool(4);
 
