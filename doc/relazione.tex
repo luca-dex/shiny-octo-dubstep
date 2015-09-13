@@ -219,9 +219,40 @@ Poiché richiediamo che $W(f)$, l'unione delle $w_i$, sia a sua volta un'immagin
 Poiché la mappa $W$ è contrattiva solo se lo sono le trasformazioni $w_i$, è necessario scegliere accuratamente i parametri di queste ultime. Dato che la metrica di distanza $d$ che abbiamo definito sopra non prende in considerazione le direzioni $x$ ed $y$, ma soltanto la direzione $z$, per assicurare la contrattività delle $w_i$ è sufficiente fare attenzione al parametro di scala $s_i$. In particolare:
 
 \begin{proprieta}
-Le trasformazioni $w_i$ definite in precedenza sono contrattive per $s_i < 1$
+Le trasformazioni $w_i$ sono contrattive per $s_i < 1$
 \end{proprieta}
 
+\subsection*{Decoding}
+
+A questo punto abbiamo tutti gli strumenti che servono per effettuare il \emph{decoding} di una immagine compressa utilizzando frattali: partendo  da una immagine qualunque, si applica ripetutamente la mappa $W$ fino a quando non si raggiunge il suo punto fisso $x_W$, che rappresenta il risultato dell'operazione di decodifica.
+
+L'aspetto interessante (e complicato) della tecnica di compressione che stiamo descrivendo è però un altro: come fare, data una immagine $f$ da comprimere, a trovare un insieme di mappe $\{w_i\}_i$ tale che $f$ sia il punto fisso della loro unione ($W$)? Questa operazione, che rappresenta il nucleo delle tecniche di compressione tramite frattali, è l'argomento della prossima sezione.
+
+\section{Encoding}
+
+Come anticipato nella precedente sezione, per comprimere un'immagine $f$ è necessario trovare una mappa $W$ tale che 
+
+\[
+f = W(f)
+\]
+
+ovvero una mappa $W$ avente $f$ come attrattore. Ricordando la definizione di $W$, la proprietà richiesta diventa
+
+\[
+f = w_1(f) \cup w_2(f) \cup \dots \cup w_N(f)
+\]
+
+Per ottenere questo, dovremmo procedere con il partizionare l'immagine $f$ in tanti pezzi tali per cui, applicando le trasformazioni $\{w_i\}_i$, si otterrebbe l'immagine di partenza. Chiaramente, in generale, questa è una condizione troppo restrittiva: ottenere \emph{esattamente} l'immagine di partenza non è qualcosa che sia possibile sperare (a parte nei casi in cui si stia cercando di comprimere un'immagine frattale!).
+
+Quello che facciamo in pratica è cercare delle trasformazioni che, applicate, ci restituiscano un'immagine \emph{differente}, diciamo $f'$, tale per cui la distanza con l'immagine di partenza, ovvero $d(f,f')$, è piccola. Operativamente, procediamo calcolando le $w_i$ con l'obbiettivo di minimizzare la distanza tra il pezzo di immagine che stiamo attualmente considerando e il pezzo di immagine ottenuto dopo l'applicazione della trasformazione. In formula, minimizziamo
+
+\[
+d\big(f \cap (R_i \times I), w_i(f)\big) 
+\]
+
+per tutti gli $i$.
+
+\subsection*{Partizionare le immagini}
 
 \chapter{Aspetti Pratici e di implementazione}
 
