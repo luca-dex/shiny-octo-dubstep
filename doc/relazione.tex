@@ -258,11 +258,22 @@ Una questione che è necessario innanzitutto risolvere è quella relativa alla s
 
 La maniera più ovvia di partizionare $f$ è quella di dividerla in quadrati di una dimensione predeterminata, ma questa scelta presenta dei problemi. Nel caso all'interno dell'immagine da trattare non vi sia una uniforme distribuzione della ``complessità dei dettagli'' (succede, ad esempio, per un ritratto di persona, che avrà un alto livello di complessità nella zona dove si trova il viso del soggetto e un basso livello di complessità ai bordi, dove si vede un muro di colore uniforme che fa da sfondo alla fotografia) una divisione uniforme andrà a penalizzare le zone con maggior presenza di dettagli, e a sprecare inutilmente blocchi (che saranno tutti uguali) per lo sfondo.
 
-Un metodo di partizionamento migliore è quello basato sui \emph{quadtree}. Si divide iniziamente l'immagine in 4 parti, e si controlla il livello di uniformità dei sotto-quadrati. Se il livello di uniformità è entro un limite $e_c$ prefissato, il blocco entra a far parte dell'insieme degli $R_i$. Altrimenti lo si partiziona in 4 parti e si ri-applica nuovamente, ricorsivamente, il procedimento appena descritto.
+Un metodo di partizionamento migliore è quello basato sui \emph{quadtrees}. Si divide iniziamente l'immagine in 4 parti, e si controlla il livello di uniformità dei sotto-quadrati. Se il livello di uniformità è entro un limite $e_c$ prefissato, il blocco entra a far parte dell'insieme degli $R_i$. Altrimenti lo si partiziona in 4 parti e si ri-applica nuovamente, ricorsivamente, il procedimento appena descritto.
 
 In genere è anche conveniente, nel contesto della compressione di immagini, scegliere due parametri $Q_{\text{max}}$ e $Q_{\text{min}}$ che definiscono rispettivamente la grandezza massima e minima dei blocchi $R_i$. Nel caso un blocco abbia dimensioni superiori a $Q_{\text{max}}$, lo si partiziona a prescindere dalla complessità interna; nel caso un blocco avente dimensioni $Q_{\text{min}}$ si cessa di partizionarlo, a prescindere dal livello di uniformità interna. Questi due parametri consentono di avere un maggior controllo sulle dimensioni dei blocchi $R_i$, e soprattutto sulla cardinalità dell'insieme degli $R_i$, che influenza pesantemente il tempo di esecuzione dell'operazione di codifica.
 
-\chapter{Aspetti Pratici e di implementazione}
+L'immagine sottostante fornisce un esempio del tipo di partizione che si può ottenere utilizzando un \emph{quadtree}. Si nota che nei punti in cui l'immagine è uniforme i blocchi sono di dimensioni maggiori, mentre nei punti ricchi di dettagli (il viso, la piuma del cappello) la suddivisione è tanto fine quanto lo consente il parametro $Q_{\text{min}}$.
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[scale=0.5]{images/lena.pdf} 
+\includegraphics[scale=0.5]{images/quadlena.pdf} 
+\caption{Quadtree su Lena, $Q_{\text{min}} = 8$, $Q_{\text{max}} = 64$, $e_c = 0.4$}
+\end{figure}
+
+\subsection*{L'algoritmo}
+
+\chapter{Aspetti Pratici e implementazione}
 
 
 \chapter{Test, benchmarks}
