@@ -3,22 +3,24 @@
 \usepackage[utf8]{inputenc}
 \usepackage[italian]{babel}
 
-\usepackage{amsmath}
+\usepackage{amsmath, amsfonts}
 \usepackage{graphicx}
-\usepackage{tabularx}
 
 \usepackage{parskip}
+\usepackage{color}
 
 \usepackage{placeins}
 
 \usepackage{url}
-\usepackage{fancyvrb}
-\usepackage{fancyref}
-\usepackage[hidelinks]{hyperref}
+
+\newtheorem{teorema}{Teorema}
+\newtheorem{lemma}[teorema]{Lemma}
+\newtheorem{proposizione}[teorema]{Proposizione}
+\newtheorem{proprieta}[teorema]{Proprietà}
 
 \author{L. De Sano, A. Donizetti}
 \title{\textsc{FIC}: Fractal Image Compression}
-\date{Luglio 2015}
+\date{Settembre 2015}
 
 \begin{document}
 \maketitle
@@ -33,22 +35,24 @@ La compressione di immagini tramite frattali (così come altre, più diffuse, ad
 
 Poiché nessun pixel dell'immagine originale viene memorizzato, la decompressione parte da un singolo pixel, di colore qualsiasi, e procede alla ricostruzione dell'immagine originale applicando iterativamente una mappa ricavata dalla struttura interna dell'immagine originale.
 
-In questo documento tratteremo delle tecniche di compressione di immagini basate su frattali, iniziando con una panoramica teorica del loro funzionamento, proseguendo con la discussione di alcuni aspetti pratici e presentando una implementazione giocattolo realizzata in MATLAB, e concludendo infine con alcuni test che consentiranno di valutare praticità e \emph{performances} di una libreria di compressione basata su frattali, anche in confronto con altre tecniche di compressione \emph{Lossy} maggiormente utilizzate.
+In questo documento tratteremo delle tecniche di compressione di immagini basate su frattali, iniziando con una panoramica teorica del loro funzionamento, proseguendo con la discussione di alcuni aspetti pratici e presentando una implementazione giocattolo realizzata in MATLAB, e concludendo infine con alcuni test che consentiranno di valutare praticità e \emph{performances} di una libreria di compressione basata su frattali, anche in confronto con altre tecniche di compressione \emph{lossy} maggiormente utilizzate.
 
 \chapter{Aspetti teorici}
 
 \section{Introduzione ai frattali}
 
-Un frattale è un oggetto geometrico che si ripete nella sua forma, allo stesso modo, su diverse scale. Questo comportamento fa si che ingrandendo una sua qualsiasi componente si ottiene comunque una figura simile all'originale. In linea di massima possiamo dire che se si considera l'insieme $F$ un frattale, $F$ dovrebbe avere le seguenti proprietà:
+Un frattale è un oggetto geometrico che si ripete nella sua forma, allo stesso modo, su diverse scale. Questo comportamento fa si che ingrandendo una sua qualsiasi componente, ciò che si ottiene è una figura simile all'originale. In linea di massima, si può dire che perché l'insieme $F$ sia considerato un frattale, $F$ dovrebbe avere almeno le seguenti proprietà:
 
 \begin{itemize}
 \item $F$ ha dettagli ad ogni scala d'ingrandimento;
-\item $F$ gode di autosimilitudine (a qualunque scala si osservi, presenta sempre gli stessi caratteri globali);
+\item $F$ gode di autosimilitudine (a qualunque scala si osservi, presenta sempre le stesse caratteristiche globali);
 \item la dimensione frattale di $F$ è maggiore della sua dimensione topologica;
 \item esiste un algoritmo relativamente semplice per costruire $F$.
 \end{itemize}
 
-% dobbiamo definire dimensione frattale e dimensine topologica? qui c'è qual che serve http://www.vanderbilt.edu/AnS/psychology/cogsci/chaos/workshop/Fractals.html
+{\color{red} TODO: definire dimensione frattale e topologica}
+
+\url{http://www.vanderbilt.edu/AnS/psychology/cogsci/chaos/workshop/Fractals.html}
 
 % mettere qualche esempio di frattale di base con la costruzione iterata?
 
@@ -90,12 +94,42 @@ Una volta che la procedura è avviata può proseguire a piacimento. Il terzo e i
 
 
 
-\section{Iterated Function System}
+\section{Iterated Function Systems}
+
+Uno strumento matematico che si rivelerà fondamentale nella fase di decompressione delle immagini trattate con un metodo di compressione frattale è quello degli \emph{Iterated Function Systems}, che andiamo per questo motivo a descrivere qui.
+
+Senza eccedere in formalità, definiamo un \emph{Iterated Function System} (IFS) come una collezione di trasformazioni contrattive $\{w_i : \mathbb{R}^2 \rightarrow \mathbb{R}^2 \}_{i=1,\ldots, n}$ che mappa il piano su se stesso. Questa collezione di trasformazioni definisce una mappa 
+
+\[
+W(\cdot) = \bigcup_{i=1}^{n} w_i(\cdot)
+\]
+
+Tale mappa è applicata ad insiemi di punti, ed il risultato è definito in questa maniera: dato un insieme di punti $S \in \mathbb{R}^2$, calcoliamo $w_i(S)$ per ogni $i$ (ovvero produciamo $i$ copie ridotte di $S$), e poi calcoliamo l'unione dei risultati (ovvero, mettiamo insieme tutte le copie ridotte), ottenendo così un nuovo insieme $S' = W(S)$.
+
+$W$ così definito è una mappa tra sottoinsiemi di $\mathbb{R}^2$ (che d'ora in avanti per noi saranno ``immagini''), e gode di due importanti (e rilevanti per la compressione frattale) proprietà, che andiamo ad enunciare senza dimostrazione.
+
+\begin{proprieta}
+Se tutte le $w_i$ sono contrattive, allora $W$ è contrattiva in uno spazio di sottoinsiemi del piano.
+\end{proprieta}
+
+\begin{proprieta}
+Fissata una mappa $W$, esiste una immagine $x_W$, chiamata \emph{attrattore per $W$}, tale che
+\begin{itemize}
+\item $W(x_W) = x_W$
+\item data una qualunque immagine di partenza $S_0$, vale che 
+\[x_W \equiv \lim_{n \rightarrow \infty} W^{n}(S_0) \]
+ovvero l'applicazione ripetuta per $n$ volte di $W$ porta ad ottenere $x_W$, per $n$ sufficientemente grande, ed indipendentemente dalla scelta dell'immagine di partenza.
+\item $x_W$ è unica. Se una qualsiasi immagine $S$ soddisfa $W(S) = S$, allora $S$ è l'attrattore per $W$.
+\end{itemize}
+\end{proprieta}
+
+La seconda di queste proprietà è nota come \emph{Contractive Mapping Fixed-Point Theorem}.
 
 
+\chapter{Aspetti Pratici ed una implementazione MATLAB}
 
 
-
+\chapter{Test, benchmarks}
 
 
 \end{document}
