@@ -61,7 +61,7 @@ Un esempio di oggetto geometrico secondo i principi di costruzione di un frattal
 \begin{figure}[!ht]
 \centering
 \includegraphics[scale=0.55]{images/koch1.png}
-\caption{Initiator e generator per la curca di Koch}
+\caption{Initiator e generator per la curva di Koch}
 \label{fig:k1}
 \end{figure}
 
@@ -70,7 +70,7 @@ La regola può essere nuovamente applicata su ogni linea, così da andare a sost
 \begin{figure}[!ht]
 \centering
 \includegraphics[scale=0.55]{images/koch2.png}
-\caption{Livello 2 per la curca di Koch}
+\caption{Livello 2 per la curva di Koch}
 \label{fig:k2}
 \end{figure}
 
@@ -81,14 +81,14 @@ Una volta che la procedura è avviata può proseguire a piacimento. Il terzo e i
 \begin{figure}[!ht]
 \centering
 \includegraphics[scale=0.55]{images/koch3.png}
-\caption{Livello 3 per la curca di Koch}
+\caption{Livello 3 per la curva di Koch}
 \label{fig:k3}
 \end{figure}
 
 \begin{figure}[!ht]
 \centering
 \includegraphics[scale=0.55]{images/koch4.png}
-\caption{Livello 4 per la curca di Koch}
+\caption{Livello 4 per la curva di Koch}
 \label{fig:k4}
 \end{figure}
 
@@ -134,7 +134,7 @@ Per poter applicare la teoria degli \emph{IFS} alle immagini come comunemente le
 Consideriamo un'immagine in scala di grigi, memorizzata come matrice di pixel, 1 byte per ogni pixel. Non è difficile immaginare di poter rappresentare tale immagine utilizzando una funzione $f: \mathbb{R}^2 \rightarrow  \{1, 2, \ldots, 255 \}$, in modo tale che ad ogni pixel alle coordinate $(x, y)$ sia fatto corrispondere un punto $(x, y)$ nel piano, al quale a sua volta viene associata un'altezza $z$, che corrisponde al valore di grigio del pixel in questione. 
 
 Ad esempio, ad un'immagine con il primo pixel in basso a sinistra avente livello di grigio 177, viene fatta corrispondere una funzione $f$ che, per quanto riguarda quel preciso punto, avrà $f(0,0) = 177$. Effettuando questa operazione su tutti i pixel dell'immagine originale, è possibile definire completamente $f$ su tutta la parte del piano di nostro interesse (e, in genere, si riduce per convenzione l'immagine ad avere dominio 
-$[0, 1] \times [0,1]$). Nella figura qui sotto riportata si può vedere un esempio del risultato finale della procedura, applicata ad una immagine grayscale $128 \times 128$ pixels.
+$[0, 1]^2$). Nella figura qui sotto riportata si può vedere un esempio del risultato finale della procedura, applicata ad una immagine grayscale $128 \times 128$ pixels.
 
 \begin{figure}[!ht]
 \centering
@@ -144,7 +144,7 @@ $[0, 1] \times [0,1]$). Nella figura qui sotto riportata si può vedere un esemp
 
 La trasformazione descritta ci permette di ignorare l'aspetto ``visivo'' della modalità in cui una immagine è memorizzata, e ci consente di identificare una immagine con la funzione $f$ associata, su cui si andrà ad operare durante il procedimento di compressione.
 
-\subsection*{Similarità tra due immagini}
+\subsection*{Distanza tra due immagini}
 
 Un secondo concetto che è necessario introdurre per poter operare sulle immagini durante il procedimento di compressione e decompressione è quello di ``distanza'' tra due immagini. La contrattività di una mappa $W$ (ovvero, intuitivamente, il fatto che essa rende le immagini più ``piccole'') può essere verificata solo se si ha a disposizione una qualche metrica sulla base della quale è possibile valutare la distanza tra due sottoinsiemi del piano (ovvero, nel nostro caso, due immagini).
 
@@ -156,7 +156,74 @@ d(f,s) = \sqrt{\int_{[0,1]^2} f(x,y) - g(x,y) \quad \text{d}x\text{d}y }
 
 La metrica ci fornisce una maniera di valutare la distanza tra due immagini pesando in maniera uniforme tutti i punti in esse contenuti.
 
-\chapter{Aspetti Pratici ed una implementazione MATLAB}
+\subsection*{Self-similarity debole}
+
+A differenza di quanto accade quando si osserva un frattale vero e proprio, all'interno di immagini ``naturali'' non troviamo una \emph{self-similarity} forte: solitamente non abbiamo parti dell'immagine che sono simili all'immagine complessiva, bensì parti dell'immagine che sono simili ad altre parti dell'immagine. Un altro aspetto da considerare è quello della colorazione: due parti dell'immagine potrebbero essere simili nella composizione dei pixel, ma differenti per quanto riguarda la gradazione di grigio dei pixels che le compongono. 
+
+I basilari IFS che abbiamo descritto in precedenza vanno leggermente complicati, nel contesto della compressione frattale delle immagini, in modo da accomodare i due aspetti qui sopra descritti. Come prima cosa, notiamo che al momento di definire le trasformazioni $w_i$, dovremo fare in modo che ad ogni trasformazione sia consentito di andare a toccare solo un particolare sottoinsieme del piano, in maniera da accomodare il requisito di poter rappresentare la \emph{self-similarity} debole (similarità tra parti e altre parti, e non con l'intera immagine). Come seconda cosa, alle mappe vanno aggiunti due parametri, \emph{contrasto} e \emph{luminosità}, che ci consentiranno di definire non solo trasformazioni  \emph{spaziali}, ma anche trasformazioni che vanno a coinvolgere la differenza di \emph{colorazione} (sempre su scala di grigi) tra due sottoinsiemi di piano.
+
+Invece della classica trasformazione su $\mathbb{R}^2$ che ci aspetteremmo considerato il fatto che stiamo operando su funzioni $\mathbb{R}^2 \rightarrow \mathbb{R}$, definiamo le $w_i$ come trasformazioni su $\mathbb{R}^3$:
+
+\[
+w_i \begin{bmatrix} 
+x \\
+y \\
+z
+\end{bmatrix} = \begin{bmatrix}
+a_i & b_i & 0 \\
+c_i & d_i & 0 \\
+0 & 0 & s_i \\
+\end{bmatrix} \cdot \begin{bmatrix} 
+x \\
+y \\
+z
+\end{bmatrix} + \begin{bmatrix} 
+e_i \\
+f_i \\
+o_i
+\end{bmatrix}
+\]
+
+La trasformazione è formata da una componente \emph{spaziale}, ovvero
+
+\[
+v_i \begin{bmatrix} 
+x \\
+y \\
+\end{bmatrix} = \begin{bmatrix}
+a_i & b_i \\
+c_i & d_i \\
+\end{bmatrix} \cdot \begin{bmatrix} 
+x \\
+y \\
+\end{bmatrix} + \begin{bmatrix} 
+e_i \\
+f_i \\
+\end{bmatrix}
+\]
+
+e di due parametri aggiuntivi $s_i$ ed $o_i$, che agiscono rispettivamente come moltiplicatore e scala tramite somma sulla componente $z$ della funzione. Questi due parametri, che chiamiamo rispettivamente \emph{contrasto} e \emph{luminosità}, non influenzano in alcun modo le componenti spaziali della trasformazione, e ci consentono di definire trasformazioni sullo spazio di \emph{colore} dell'immagine (che, ricordiamo, è rappresentato nella funzione associata all'immagine come la componente $z$). 
+
+Ricordando che l'immagine è rappresentata da una funzione $z = f(x,y)$, dove $x$ ed $y$ sono pixels e $z$ il grado di grigio dell'immagine \emph{grayscale}, una singola trasformazione $w_i$ viene applicata calcolando $w_i(f) = w_i(x, y, f(x,y))$. La parte spaziale di $w_i$ determina come una sotto-parte dell'immagine è mappata su altre sottoparti, mentre $s_i$ ed $o_i$ determinano contrasto e luminosità della trasformazione.
+
+Il fatto che il mapping sia da effettuarsi da sottoinsiemi a sottoinsiemi dell'immagine è permesso dal fatto che le varie $w_i$ sono implicitamente definite in modo da operare su un sottoinsieme di $[0,1]^2$, che chiamiamo $D_i$, dando come risultato un sottoinsieme di $[0,1]^2$, che chiameremo $R_i$. In simboli, scriviamo che
+
+\[
+v_i(D_i) = R_i
+\]
+
+ovvero la componente spaziale della trasformazione ha dominio in sottoinsiemi del piano che chiamiamo $D_i$ e codominio in sottoinsiemi del piano che chiamiamo $R_i$.
+
+Poiché richiediamo che $W(f)$, l'unione delle $w_i$, sia a sua volta un'immagine compatta, le trasformazioni devono soddisfare due proprietà basilari: prima di tutto gli $R_i$ devono partizionare completamente $[0,1]^2$, ovvero deve valere $\bigcup_i R_i = [0,1]^2$. Inoltre gli $R_i$ non devono sovrapporsi, ovvero deve valere $R_i \not= R_j$ se $i \not= j$. Queste due proprietà garantiscono che l'applicazione della mappa $W$ su una immagine $S$ risulti in una immagine $S'$, possibilmente differente, ma completa ed univoca.
+
+Poiché la mappa $W$ è contrattiva solo se lo sono le trasformazioni $w_i$, è necessario scegliere accuratamente i parametri di queste ultime. Dato che la metrica di distanza $d$ che abbiamo definito sopra non prende in considerazione le direzioni $x$ ed $y$, ma soltanto la direzione $z$, per assicurare la contrattività delle $w_i$ è sufficiente fare attenzione al parametro di scala $s_i$. In particolare:
+
+\begin{proprieta}
+Le trasformazioni $w_i$ definite in precedenza sono contrattive per $s_i < 1$
+\end{proprieta}
+
+
+\chapter{Aspetti Pratici e di implementazione}
 
 
 \chapter{Test, benchmarks}
