@@ -1,3 +1,9 @@
+## image folders
+./benchmarks/images_pgm/*
+./benchmarks/images_fiasco/*
+./benchmarks/decoded_fiasco/*
+./benchmarks/decoded_jpeg/*
+
 ## Core latex/pdflatex auxiliary files:
 *.aux
 *.lof
