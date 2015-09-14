@@ -286,6 +286,8 @@ R = \frac{1}{n} \left[ \sum\limits_{i=1}^{n}{b_i^2}
 + o \left( no - 2 \sum\limits_{i=1}^{n}{b_i} \right)  \right]
 \]
 
+Sotto queste condizioni la distanza tra le due immagini equivale a $\sqrt{R}$.
+
 \subsection*{Partizionare le immagini}
 
 Una questione che è necessario innanzitutto risolvere è quella relativa alla scelta delle collezioni $R_i$ e $D_i$. 
@@ -396,7 +398,7 @@ A questo punto è abbiamo creato il dominio $D$ che andremo ad utilizzare nei po
 
 \section{Encoding}
 
-Ora l'immagine viene partizionata e per ogni partizione creata con \textit{quadtree} si cerca di trovare una copertura ottimale usando il dominio.
+Ora si cerca di trovare una copertura ottimale per ogni partizione dell'immagine.
 
 \begin{minted}[linenos=true]{matlab}
 function [ partial_enc ] = 
@@ -520,6 +522,50 @@ Successivamente, per ognuna della quattro sottoimmagini generate tramite il part
 Ora che per ogni sottoimmagine è stata individuata la migliore copertura si passa a verificare se questa effettivamente soddisfafa il valore di threshold voluto e di dimensioni minime. In caso positivo si memorizzano tutti i valori necessari, in caso contrario si applica ricorsivamente la funzione al quarto di immagine. Ad esempio per la sottoimmagine in alto a sinistra la procedura parte con il verificare se le soglie di threshold e dimensione sono rispettate, riga 73, e in caso negativo si riapplica la procedura a questo quarto di immagine, righe 74 e 75. Nel caso in cui i valori di soglia siano rispettati invece si calcolano i valori di \texttt{s} e di \texttt{o}, riga 78, e si memorizza il tutto nella mappa $W$, righe 79 e 80.  Questa operazione viene ripetuta per tutte e quattro le sottoimmagini.
 
 A questo punto l'encoding è terminato, in quanto si ha a disposizione la mappa $W$ che, come abbiamo visto precedentemente, contiene tutte le informazioni che servono per trasformare un immagine qualsiasi nell'immagine di partenza.
+
+\section{Metrica}
+
+Nel precedente frammento di codice è stata introdotta la funzione \texttt{sup\_dist} per il calcolo della distanza tra immagine nel dominio e immagine proveniente dal \textit{quadtree}, di seguito è riportato il funzionamento effettivo di questa funzione, che rispecchia le equazioni viste in precedenza per il calcolo della distanza basandosi sui valori ottimali di $s$ e $o$.
+
+\begin{minted}[linenos=true]{matlab}
+function [ rms, transf ] = sup_dist( img1, img2 )
+    rms_arr = zeros(1,8);
+
+    for i = 1:8
+        rms_arr(i) = dsh(img1, rotate_image(img2, i));
+    end
+
+    transf = find(rms_arr - min(rms_arr) == 0, 1);
+    rms = rms_arr(transf);
+end
+
+function [s, o] = least_squared_params(img1, img2)
+    n = length(img1)^2;
+    a = single(reshape(img2, [1, n]));
+    b = single(reshape(img1, [1, n]));
+
+    s = ( n * dot(a, b) - sum(a)*sum(b) ) / ( n * sum(a.^2) - sum(a)^2 );
+    s = min(s, 1);
+    o = ( sum(b) - s*sum(a) ) / n;
+end
+
+function [ rms ] = dsh(img1, img2)
+    [s, o] = least_squared_params(img1, img2);
+
+    n = length(img1)^2;
+    a = single(reshape(img2, [1, n]));
+    b = single(reshape(img1, [1, n]));
+
+    rms = sqrt(( sum(b.^2) + s * (s*sum(a.^2) - 2*dot(a,b) 
+        + 2*o*sum(a)) + o*(n*o - 2*sum(b)) ) / n);
+end
+\end{minted}
+
+La funzione principale è \texttt{sup\_dist} che si occupa di effettuare il confronto tra la sottoimmagine presa in cosiderazione e tutte le possibili 8 rototraslazioni dell'elemento del dominio, righe 4 - 8. Questa funzione restituisce poi il valore della distanza e la rotazione, rappresentata da una mappa di valori da 1 a 8, righe 10 e 11.
+
+La seconda funzione \texttt{least\_squared\_params} si occupa, date due immagini, di trovare i valori di $s$ e di $o$ secondo le equazioni viste nel precedente capitolo, righe 17 - 19.
+
+La terza funzione, \texttt{dsh} si occupa, date due immagini e calcolati i valori di $s$ e di $o$ tramite la precedente funzione, di calcolare il valore della distanza, righe 29 e 30.
 
 \chapter{Test, benchmarks}
 
