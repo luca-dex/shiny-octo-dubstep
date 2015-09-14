@@ -11,6 +11,10 @@
 
 \usepackage{placeins}
 
+\usepackage{algpseudocode}
+\usepackage{framed}
+
+
 \usepackage{url}
 
 \newtheorem{teorema}{Teorema}
@@ -258,7 +262,7 @@ Una questione che è necessario innanzitutto risolvere è quella relativa alla s
 
 La maniera più ovvia di partizionare $f$ è quella di dividerla in quadrati di una dimensione predeterminata, ma questa scelta presenta dei problemi. Nel caso all'interno dell'immagine da trattare non vi sia una uniforme distribuzione della ``complessità dei dettagli'' (succede, ad esempio, per un ritratto di persona, che avrà un alto livello di complessità nella zona dove si trova il viso del soggetto e un basso livello di complessità ai bordi, dove si vede un muro di colore uniforme che fa da sfondo alla fotografia) una divisione uniforme andrà a penalizzare le zone con maggior presenza di dettagli, e a sprecare inutilmente blocchi (che saranno tutti uguali) per lo sfondo.
 
-Un metodo di partizionamento migliore è quello basato sui \emph{quadtrees}. Si divide iniziamente l'immagine in 4 parti, e si controlla il livello di uniformità dei sotto-quadrati. Se il livello di uniformità è entro un limite $e_c$ prefissato, il blocco entra a far parte dell'insieme degli $R_i$. Altrimenti lo si partiziona in 4 parti e si ri-applica nuovamente, ricorsivamente, il procedimento appena descritto.
+Un metodo di partizionamento migliore è quello basato sui \emph{quadtrees}. Si divide iniziamente l'immagine in 4 parti, e si controlla il livello di fedeltà dei sotto-quadrati rispetto all'immagine orignale. Se il livello di fedeltà è entro un limite $e_c$ prefissato, il blocco entra a far parte dell'insieme degli $R_i$. Altrimenti lo si partiziona in 4 parti e si ri-applica nuovamente, ricorsivamente, il procedimento appena descritto.
 
 In genere è anche conveniente, nel contesto della compressione di immagini, scegliere due parametri $Q_{\text{max}}$ e $Q_{\text{min}}$ che definiscono rispettivamente la grandezza massima e minima dei blocchi $R_i$. Nel caso un blocco abbia dimensioni superiori a $Q_{\text{max}}$, lo si partiziona a prescindere dalla complessità interna; nel caso un blocco avente dimensioni $Q_{\text{min}}$ si cessa di partizionarlo, a prescindere dal livello di uniformità interna. Questi due parametri consentono di avere un maggior controllo sulle dimensioni dei blocchi $R_i$, e soprattutto sulla cardinalità dell'insieme degli $R_i$, che influenza pesantemente il tempo di esecuzione dell'operazione di codifica.
 
@@ -271,7 +275,56 @@ L'immagine sottostante fornisce un esempio del tipo di partizione che si può ot
 \caption{Quadtree su Lena, $Q_{\text{min}} = 8$, $Q_{\text{max}} = 64$, $e_c = 0.4$}
 \end{figure}
 
+Oltre al partizionamento con \emph{quadtree}, esistono altri metodi applicabili in questo contesto, ad esempio il metodo di partizionamento HV ed il metodo di partizionamento triangolare, che va a generare sottoimmagini non quadrate e può essere quindi vantaggioso nei casi in cui l'immagine di partenza contenga un gran numero di linee oblique (che non sono facilmente coperte da metodi di partizionamento basati su quadrati).
+
 \subsection*{L'algoritmo}
+
+Abbiamo ora a disposizione tutti gli elementi che ci servono per descrivere ad alto livello il funzionamento dell'algoritmo di codifica frattale. Lo riportiamo di seguito sotto forma di pseudocodice
+
+\begin{framed}
+\begin{algorithmic}
+\Procedure{Encode}{$e_c$, $r_{\text{min}}$}
+\State $R_1 \gets [0,1]^2$
+\State $R \gets R \cup R_1$
+\State Segna $R_1$ come non coperto
+\While{$\exists R_i \in R$ non coperto}
+	\State $D_i, w_i \gets$ \Call{bestcover}{$R_i$}  
+	\If{$d\big(f \cap (R_i \times I), w_i(f)\big) < e_c$ OR $ \text{size}(R_i) \leq r_{\text{min}}$}
+		\State Segna $R_i$ come coperto
+		\State $W \gets W \cup w_i$
+	\Else	
+		\State Partiziona $R_i$ in 4 parti $R_a, R_b R_c, R_d$ 
+		\State $R \gets R \setminus R_i$
+		\State $R \gets R \cup \{R_a, R_b, R_c, R_d\}$
+		\State Segna $R_{\{a,b,c,d\}}$ come non coperti
+	\EndIf
+\EndWhile
+\EndProcedure
+\end{algorithmic}
+\end{framed}
+
+La procededura \textproc{bestcover} prende come input una sottimmagine $R_i$, e ritorna la sottoimmagine $D_i$ e la rispettiva trasformazione $w_i$ che coprono meglio $R_i$.
+
+\begin{framed}
+\begin{algorithmic}
+\Procedure{bestcover}{$R_i$}
+\State $score \gets \infty$
+\State $d, w \gets$, NULL, NULL
+\ForAll{$D_i \in D$}
+	\State $w_{\text{temp}}, s \gets$ \Call{score}{$D_i, R_i$}
+	\If{$s < score$}
+		\State $w \gets w_{\text{temp}}$
+		\State $score \gets s$
+		\State $d \gets D_i$
+	\EndIf
+\EndFor \\
+$~~~~$\Return $d, w$
+\EndProcedure
+\end{algorithmic}
+\end{framed}
+
+
+
 
 \chapter{Aspetti Pratici e implementazione}
 
