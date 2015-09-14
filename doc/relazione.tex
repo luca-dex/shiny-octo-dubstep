@@ -1,8 +1,9 @@
 \documentclass[11pt,a4paper]{scrreprt}
 
+\usepackage[hidelinks, bookmarks]{hyperref}
 \usepackage[utf8]{inputenc}
 \usepackage[italian]{babel}
-
+\usepackage{minted}
 \usepackage{amsmath, amsfonts}
 \usepackage{graphicx}
 
@@ -256,6 +257,35 @@ d\big(f \cap (R_i \times I), w_i(f)\big)
 
 per tutti gli $i$. In termini di $R_i$ ed $D_i$ (i concreti pezzi di immagini su cui andremo ad operare), dobbiamo partizionare l'immagine $f$ in una collezione di pezzi $R_i$, e cercare da una seconda collezione $D_i$ dei pezzi tali per cui la mappa da $D_i$ ad $R_i$ comporta un errore (calcolato come distanza $d$) che sia piccolo.
 
+\subsection*{Metrica}
+
+Come abbiamo visto prima la comparazione tra le due immagini avviene tramite la radice della media quadratica. Usare questa metrica ci consente di calcolare i valori ottimali per $s_i$ e di $o_i$ in maniera semplice. In particolare dati due quadrati contenenti $n$ valori di luminosità dei pixel $ai, \dots, a_n$ per $D_i$ e $b_1, \dots, b_n$ per $R_i$, possiamo cercare i valori di $s$ e di $o$ che minimizzano la quantità:
+
+\[
+R = \sum_{i=1}^{n}{\left( s \cdot a_i + o - b_i \right) }
+\]
+
+Questa quantità ci fornisce i valori di contrasto e luminosità che fanno si che la trasformazione dai i valori di $a_i$  a quelli di $b_i$ abbia la minima distanza possibile. Il valore minimo di $R$ si ha quando le derivate parziali di $s$ e di $o$ si azzerano e questa condizione si ha quando:
+
+\[
+s = \dfrac{\left[ n \sum\limits_{i=1}^{n}{a_i b_i} - \sum\limits_{i=1}^{n}{a_i} \sum\limits_{i=1}^{n}{b_i} \right] }
+{\left[ n \sum\limits_{i=1}^{n}{a_i^2} - {\left( \sum\limits_{i=1}^{n}{a_i} \right)}^2 \right] }
+\]
+
+e
+
+\[
+o = \frac{1}{n} \left[ \sum\limits_{i=1}^{n}{b_i} - s \sum\limits_{i=1}^{n}{a_i} \right]
+\]
+
+A questo punto, avendo i valori ottimali di $s$ e di $o$ possiamo calcolare $R$ come:
+
+\[
+R = \frac{1}{n} \left[ \sum\limits_{i=1}^{n}{b_i^2} 
++ s \left( s \sum\limits_{i=1}^{n}{a_i^2} - 2 \sum\limits_{i=1}^{n}{a_i b_i} + 2o \sum\limits_{i=1}^{n}{a_i}  \right) 
++ o \left( no - 2 \sum\limits_{i=1}^{n}{b_i} \right)  \right]
+\]
+
 \subsection*{Partizionare le immagini}
 
 Una questione che è necessario innanzitutto risolvere è quella relativa alla scelta delle collezioni $R_i$ e $D_i$. 
@@ -327,7 +357,169 @@ La procedura \textproc{score} restituisce una trasformazione $w_i$ ed uno $score
 
 \chapter{Aspetti Pratici e implementazione}
 
+In questo capitolo forniamo un'implementazione didattica dell'algoritmo di compressione usando frattali per permettere di comprenderne gli aspetti pratici . Il codice è stato scritto in linguaggio MATLAB ed è possibile scaricarlo da \url{https://github.com/luca-dex/shiny-octo-dubstep}.
 
+\section{Creazione del Dominio}
+
+Il primo passo dell'algoritmo è quello di andare a creare, partendo dall'immagine da comprimere, il dominio $D$. Questa operazione è descritta nel frammento di codice riportato di seguito.
+
+\begin{minted}[linenos=true]{matlab}
+function [ d, d2 ] = domains( image, range_sizes, l )
+if nargin < 3
+    l = 2;
+end
+d = {1000,2};
+dim = length(image);
+index = 1;
+counter = 1;
+range_sizes = sort(range_sizes, 'descend');
+for size = range_sizes
+    step = size / l;
+    for i = 1:step:(dim-size)
+        for j = 1:step:(dim-size)
+            counter = counter + 1;
+            imm = image(i:i+size-1, j:j+size-1);
+            if check_equals(d, imm, index-1)
+                continue
+            end
+            d(index,1) = {imm};
+            d(index,2) = {[i j size]};
+            index = index + 1;
+        end
+    end
+end
+\end{minted}
+
+Inizialmente, righe 2-4, viene definito il passo di sovrapposizione tra le immagini del dominio; di default la sovrapposizione è metà della dimensione dell'immagine. Successivamente, riga 10, si itera su ogni dimensione che si vuole assegnare al dominio e per ognuna di si va a definire lo step di sovrapposizione come \texttt{size / l}, riga 11. I passi successivi, righe 12 e 13 sono quello di andare ad individuare tutti gli inizi di sottoimmagine del dominio (angolo in alto a sinistra dell'immagine), dato il valore di \texttt{step}, e quello prendere l'immagine di dimensione \texttt{size}, riga 15. Se questa sottoimmagine non è ancora presente nel dominio, riga 16, allora la si memorizza, riga 19, unitamente alle sue coordinate e alla sua dimensione, riga 20.
+
+A questo punto è abbiamo creato il dominio $D$ che andremo ad utilizzare nei possimi passi dell'algoritmo. Per comodità, siccome durante i confronti ogni immagine nel dominio viene dimezzata, al termine di questa procedura provvediamo a salvare una copia di ogni immagine del dominio di dimensioni dimezzate con opportuna trasformazione lineare.
+
+\section{Encoding}
+
+Ora l'immagine viene partizionata e per ogni partizione creata con \textit{quadtree} si cerca di trovare una copertura ottimale usando il dominio.
+
+\begin{minted}[linenos=true]{matlab}
+function [ partial_enc ] = 
+    qtfunction(img, pos, size, split_t, min_size, max_size, doms, min_rms)
+
+    global img_copy;
+    x = pos(1);
+    y = pos(2);
+    partial_enc = [];
+
+    if size/2 > max_size
+        a = qtfunction(img, [x y], size/2, split_t, 
+            min_size, max_size, doms, min_rms);
+        b = qtfunction(img, [x+size/2 y], size/2, split_t, 
+            min_size, max_size, doms, min_rms);
+        c = qtfunction(img, [x y+size/2], size/2, split_t, 
+            min_size, max_size, doms, min_rms);
+        d = qtfunction(img, [x+size/2 y+size/2], size/2, split_t, 
+            min_size, max_size, doms, min_rms);
+        partial_enc = [a; b; c; d;];
+        return
+    end
+
+    rms = repmat(+Inf, [1 4]);
+    ts = zeros(1, 4);
+    doms_ind = zeros(1, 4);
+
+    for i = 1:length(doms)
+        d = doms{i,1};
+        if length(d) ~= size/2
+            continue
+        end
+        
+        if rms(1) > min_rms
+            [r, t] = sup_dist(img(x:(x + size/2 -1), 
+                                  y:(y + size/2 -1)), d);
+            if r < rms(1)
+                rms(1) = r;
+                ts(1) = t;
+                doms_ind(1) = i;
+            end
+        end
+        
+        if rms(2) > min_rms
+            [r, t] = sup_dist(img((x + size/2):(x+size-1), 
+                                   y:(y + size/2 -1)), d);
+            if r < rms(2)
+                rms(2) = r;
+                ts(2) = t;
+                doms_ind(2) = i;
+            end
+        end
+        
+        if rms(3) > min_rms
+            [r, t] = sup_dist(img(x:(x + size/2 - 1), 
+                                 (y + size/2):(y+size-1)), d);
+            if r < rms(3)
+                rms(3) = r;
+                ts(3) = t;
+                doms_ind(3) = i;
+            end
+        end
+        
+        if rms(4) > min_rms
+            [r, t] = sup_dist(img((x + size/2):(x+size-1) , 
+                                  (y + size/2):(y+size-1)) , d);
+            if r < rms(4)
+                rms(4) = r;
+                ts(4) = t;
+                doms_ind(4) = i;
+            end
+        end        
+    end
+
+    if rms(1) > split_t && size/2 > min_size
+        partial_enc = [partial_enc; qtfunction(img, [x y], size/2,
+             split_t, min_size, max_size, doms, min_rms)];
+    else
+        img1 = img(x:(x + size/2 -1), y:(y + size/2 -1));
+        [s, o] = least_squared_params(img1, doms{doms_ind(1),1});
+        partial_enc = [partial_enc; 
+            [x y size/2 doms{doms_ind(1),2} ts(1) s o]];
+    end
+
+    if rms(2) > split_t && size/2 > min_size
+        partial_enc = [partial_enc; qtfunction(img, [x+size/2 y], size/2, 
+            split_t, min_size, max_size, doms, min_rms)];
+    else
+        img1 = img((x + size/2):(x+size-1), y:(y + size/2 -1));
+        [s, o] = least_squared_params(img1, doms{doms_ind(2),1});
+        partial_enc = [partial_enc; 
+            [x+size/2 y size/2 doms{doms_ind(2),2} ts(2) s o]];
+    end
+
+    if rms(3) > split_t && size/2 > min_size
+        partial_enc = [partial_enc; qtfunction(img, [x y+size/2], size/2, 
+            split_t, min_size, max_size, doms, min_rms)];
+    else
+        img1 = img(x:(x + size/2 - 1), (y + size/2):(y+size-1));
+        [s, o] = least_squared_params(img1, doms{doms_ind(3),1});
+        partial_enc = [partial_enc; 
+            [x y+size/2 size/2, doms{doms_ind(3),2} ts(3) s o]];
+    end
+
+    if rms(4) > split_t && size/2 > min_size
+        partial_enc = [partial_enc; qtfunction(img, [x+size/2 y+size/2], size/2, 
+            split_t, min_size, max_size, doms, min_rms)];
+    else
+        img1 = img((x + size/2):(x+size-1) , (y + size/2):(y+size-1));
+        [s, o] = least_squared_params(img1, doms{doms_ind(4),1});
+        partial_enc = [partial_enc; 
+            [x+size/2 y+size/2 size/2, doms{doms_ind(4),2} ts(4) s o]];
+    end
+end
+\end{minted}
+
+Come prima operazione si valuta se il partizionamento produce sottoimmagini sufficientemente piccole, riga 9, e, in caso questo non avvenga, si procede a dividere in 4 parti l'immagine considerata e ad applicare ricorsivamente la procedura, righe 10 - 19. 
+
+Successivamente, per ognuna della quattro sottoimmagini generate tramite il partizionamento con \textit{quadtree}, vengono calcolati i valore della distanza $d$ e della rotazione dell'immagine del dominio. Ad esempio per la sottoimmagine in alto a sinistra la procedura parte col considerare tutti gli elementi del dominio, riga 26, e per ognuno, tramite la funzione \texttt{sup\_dist}, riga 33, verificare se viene trovato un valore di distanza $d$ minore di quelli calcolati fino a quel momento. Per fare questa operazione viene considerata anche ogni possibile roto-traslazione dell'immagine stessa. Se il valore è effettivamente minore, questo viene memorizzato, riga 36, unitamente alle indicazioni sulla rotazione e all'indice di posizione dell'elemento del dominio, righe 37 e 38. Questa operazione viene ripetuta per tutte e quattro le sottoimmagini.
+
+Ora che per ogni sottoimmagine è stata individuata la migliore copertura si passa a verificare se questa effettivamente soddisfafa il valore di threshold voluto e di dimensioni minime. In caso positivo si memorizzano tutti i valori necessari, in caso contrario si applica ricorsivamente la funzione al quarto di immagine. Ad esempio per la sottoimmagine in alto a sinistra la procedura parte con il verificare se le soglie di threshold e dimensione sono rispettate, riga 73, e in caso negativo si riapplica la procedura a questo quarto di immagine, righe 74 e 75. Nel caso in cui i valori di soglia siano rispettati invece si calcolano i valori di \texttt{s} e di \texttt{o}, riga 78, e si memorizza il tutto nella mappa $W$, righe 79 e 80.  Questa operazione viene ripetuta per tutte e quattro le sottoimmagini.
+
+A questo punto l'encoding è terminato, in quanto si ha a disposizione la mappa $W$ che, come abbiamo visto precedentemente, contiene tutte le informazioni che servono per trasformare un immagine qualsiasi nell'immagine di partenza.
 
 \chapter{Test, benchmarks}
 
