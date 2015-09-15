@@ -1,3 +1,7 @@
+% A single decode step
+% Authors: Luca De Sano, Alberto Donizetti
+% Released under UNIMIAMIB License
+
 function [ outputimg ] = decode_step( img )
 global encoding;
 

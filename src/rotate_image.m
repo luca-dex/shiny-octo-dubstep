@@ -1,3 +1,7 @@
+% Rotate image
+% Authors: Luca De Sano, Alberto Donizetti
+% Released under UNIMIAMIB License
+
 function [ outimg ] = rotate_image( img, ts )
 
 if ts > 4

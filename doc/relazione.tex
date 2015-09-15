@@ -592,6 +592,21 @@ Il contenuto della cartella è organizzato nel seguente modo:
 
 \section{Implementazione MATLAB}
 
+Il codice MATLAB è progettato per essere eseguito in maniera parallela su una macchina quad-core. La prima parte dell'algoritmo è l'encoding dell'immagine. Tutto il setting dei parametri iniziali avviene all'interno del file \texttt{main.m}. I parametri che è possibile configurare sono:
+
+\begin{itemize}
+\item \texttt{im} Path dell'immagine da comprimere, che deve essere quadrata ed in formato BMP
+\item \texttt{dom\_range} Dimensione degli elementi che verranno salvati nel dominio. Devono essere divisori della lunghezza del lato dell'immagine
+\item \texttt{l} Parametro di sovrapposizione. Il default è 2
+\item \texttt{min\_rms} La soglia di errore oltre la quale si accetta la copertura selezionata
+\item \texttt{max\_range} La soglia di errore oltre la quale si rifiuta la copertura selezionata e si riapplica quadtree 
+\item \texttt{output} Path dell'output dell'algoritmo (workspace MATLAB).
+\end{itemize}
+
+Una volta che tutti i parametri sono configurati può essere lanciato l'algoritmo. Il tempo di esecuzione è molto alto, in quanto non sono presenti ottimizzazioni particolari, oltre alla parallelizzazione dell'esecuzione. Consigliamo quindi di non eccedere con la dimensione delle immagini.
+
+Una volta che l'immagine è compressa può essere ricostruita con la funzione \texttt{decode\_all}. Dentro a questa funzione deve essere configurato il parametro \texttt{workspace} con il path del workspace salvato dalla funzione precedente. Questa funzione mostra per prima cosa l'immagine originale e, ogni volta che viene eseguito un click all'interno dell'immagine viene mostrato uno step di ricostruzione.
+
 \section{Benchmark}
 
 

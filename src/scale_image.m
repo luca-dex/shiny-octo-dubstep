@@ -1,3 +1,7 @@
+% Scale image
+% Authors: Luca De Sano, Alberto Donizetti
+% Released under UNIMIAMIB License
+
 function [ outimg ] = scale_image( image )
 
 n = length(image)/2;

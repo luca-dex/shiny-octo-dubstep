@@ -1,3 +1,7 @@
+% Check equals
+% Authors: Luca De Sano, Alberto Donizetti
+% Released under UNIMIAMIB License
+
 function [ result ] = check_equals( list, matrix, index )
 result = false;
 for i=1:index

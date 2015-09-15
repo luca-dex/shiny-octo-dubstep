@@ -1,3 +1,7 @@
+% Least Squared Params
+% Authors: Luca De Sano, Alberto Donizetti
+% Released under UNIMIAMIB License
+
 function [s, o] = least_squared_params(img1, img2)
 
 if length(img1) ~= length(img2)

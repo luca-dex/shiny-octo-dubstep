@@ -1,3 +1,7 @@
+% Derotate Image
+% Authors: Luca De Sano, Alberto Donizetti
+% Released under UNIMIAMIB License
+
 function [ outimg ] = derotate_image( img, ts )
 
 if ts > 4

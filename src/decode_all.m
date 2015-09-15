@@ -1,3 +1,11 @@
+% Decode
+% Authors: Luca De Sano, Alberto Donizetti
+% Released under UNIMIAMIB License
+
+workspace = '../workspace/girl_4_8_16_32_rms4.mat';
+
+load(workspace);
+
 imgd = ones(length(img)) * 0;
 imshow(uint8(img));
 

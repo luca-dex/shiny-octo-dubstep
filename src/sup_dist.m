@@ -1,3 +1,7 @@
+% RMS distance
+% Authors: Luca De Sano, Alberto Donizetti
+% Released under UNIMIAMIB License
+
 function [ rms, transf ] = sup_dist( img1, img2 )
 
 if length(img1) ~= length(img2)

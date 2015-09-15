@@ -1,3 +1,7 @@
+% Test viewer
+% Authors: Luca De Sano, Alberto Donizetti
+% Released under UNIMIAMIB License
+
 I = imread('images/lena512.bmp');
 S = qtdecomp(I, 0.3, [8, 32]);
 blocks = repmat(uint8(0),size(S));

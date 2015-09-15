@@ -1,3 +1,7 @@
+% Encoding
+% Authors: Luca De Sano, Alberto Donizetti
+% Released under UNIMIAMIB License
+
 function [ partial_enc ] = ...
     qtfunction( img, position, size, split_threshold, min_size, max_size, doms, min_rms )
 

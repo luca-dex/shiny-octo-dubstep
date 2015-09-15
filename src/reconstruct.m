@@ -1,3 +1,7 @@
+% Range cover sample
+% Authors: Luca De Sano, Alberto Donizetti
+% Released under UNIMIAMIB License
+
 imgr = zeros(512);
 for i=1:length(encoding)
     

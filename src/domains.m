@@ -1,3 +1,7 @@
+% Create domains
+% Authors: Luca De Sano, Alberto Donizetti
+% Released under UNIMIAMIB License
+
 function [ d, d2 ] = domains( image, range_sizes, l )
 
 if nargin < 3
