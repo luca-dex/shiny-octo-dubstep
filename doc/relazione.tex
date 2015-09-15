@@ -1,4 +1,4 @@
-\documentclass[11pt,a4paper]{scrreprt}
+\documentclass[11pt,a4paper,appendixprefix=true,numbers=noenddot]{scrreprt}
 
 \usepackage[hidelinks, bookmarks]{hyperref}
 \usepackage[utf8]{inputenc}
@@ -22,6 +22,8 @@
 \newtheorem{lemma}[teorema]{Lemma}
 \newtheorem{proposizione}[teorema]{Proposizione}
 \newtheorem{proprieta}[teorema]{Proprietà}
+
+\newcommand{\shellcmd}[1]{\\\indent\indent\texttt{\footnotesize\# #1}\\}
 
 \author{L. De Sano, A. Donizetti}
 \title{\textsc{FIC}: Fractal Image Compression}
@@ -51,15 +53,9 @@ Un frattale è un oggetto geometrico che si ripete nella sua forma, allo stesso 
 \begin{itemize}
 \item $F$ ha dettagli ad ogni scala d'ingrandimento;
 \item $F$ gode di autosimilitudine (a qualunque scala si osservi, presenta sempre le stesse caratteristiche globali);
-\item la dimensione frattale di $F$ è maggiore della sua dimensione topologica;
+\item la dimensione frattale\footnote{La dimensione frattale è un rapporto che fornisce un indice statistico relativo a come varia la complessità di un frattale rispetto alla scala a cui viene misurato.} di $F$ è maggiore della sua dimensione topologica\footnote{La dimensione topologica è un concetto di dimensione che si applica ad uno spazio topologico, ad esempio in $\mathbb{R}^n$ è $n$.};
 \item esiste un algoritmo relativamente semplice per costruire $F$.
 \end{itemize}
-
-{\color{red} TODO: definire dimensione frattale e topologica}
-
-\url{http://www.vanderbilt.edu/AnS/psychology/cogsci/chaos/workshop/Fractals.html}
-
-% mettere qualche esempio di frattale di base con la costruzione iterata?
 
 Un esempio di oggetto geometrico secondo i principi di costruzione di un frattale e che rispetta le proprietà elencate è la curva di \textit{Koch}. La costruzione comincia con una linea di lunghezza $1$ chiamata \textit{initiatior}. Da questa linea si rimuove il terzo centrale e lo si sostituisce con due linee della stessa lunghezza della parte rimossa. Questa nuova forma viene chiamata \textit{generator}. La prima parte della costruzione è mostrata in figura \ref{fig:k1}.
 
@@ -568,6 +564,36 @@ La seconda funzione \texttt{least\_squared\_params} si occupa, date due immagini
 La terza funzione, \texttt{dsh} si occupa, date due immagini e calcolati i valori di $s$ e di $o$ tramite la precedente funzione, di calcolare il valore della distanza, righe 29 e 30.
 
 \chapter{Test, benchmarks}
+
+asd
+
+\appendix
+
+\chapter{Tutorial per l'esecuzione del codice sorgente}
+
+In questa appendice daremo una breve descrizione di come utilizzare il codice sorgente con cui sono stati realizzati gli esempi e i bechmarcks utilizzati nei vari capitoli di questo documento. 
+
+Per l'esecuzione del codice MATLAB è necessario che sia installato il plugin \textit{Image Processing Toolbox}\footnote{Maggiori dettagli su \url{http://mathworks.com/products/image/}}.
+
+Per l'esecuzione dei benchmark è necessario che siano installati sul sistema \textit{ImageMagick}\footnote{Maggiori dettagli su \url{http://www.imagemagick.org/}}, libreria per la manipolazione di immagini utilizzata per effettuare la compressione in formato JPEG, e \textit{Fiasco}\footnote{Maggiori dettagli su \url{http://github.com/l-tamas/Fiasco}}, libreria sperimentale per la compressione di immagini utilizzando FIC.
+
+\noindent La prima cosa da fare è clonare il repository che contiene tutti i sorgenti:
+\shellcmd{git clone https://github.com/luca-dex/shiny-octo-dubstep}
+
+Il contenuto della cartella è organizzato nel seguente modo:
+
+\begin{itemize}
+\item \texttt{src/} Contiene i sorgenti dell'algoritmo implementato in MATLAB
+\item \texttt{benchmarks} Contiene gli script per eseguire i benchmarks
+\item \texttt{doc/} Contiene il sorgente da cui è stato realizzato questo documento
+\item \texttt{workspace/} Contiene esempi di immagini compresse realizzate con l'algoritmo implementato in MATLAB
+\item \texttt{images/} Contiene alcune immagini campione utilizzabili con gli algoritmi implementati
+\end{itemize}
+
+\section{Implementazione MATLAB}
+
+\section{Benchmark}
+
 
 
 \end{document}

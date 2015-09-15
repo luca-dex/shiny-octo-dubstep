@@ -1,4 +1,5 @@
-function [ partial_enc ] = qtfunction( img, position, size, split_threshold, min_size, max_size, doms, min_rms )
+function [ partial_enc ] = ...
+    qtfunction( img, position, size, split_threshold, min_size, max_size, doms, min_rms )
 
 global img_copy;
 

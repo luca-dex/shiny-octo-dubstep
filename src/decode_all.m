@@ -1,5 +1,5 @@
 imgd = ones(length(img)) * 0;
-imshow(uint8(imgd));
+imshow(uint8(img));
 
 set(gca,'units','centimeters')
 pos = get(gca,'Position');
