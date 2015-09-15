@@ -53,7 +53,5 @@ end
 
 sprintf('scaled domain size: %d\n', index2-1)
 
-
-
 end
 

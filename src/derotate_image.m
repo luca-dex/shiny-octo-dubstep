@@ -5,7 +5,6 @@ if ts > 4
     ts = ts - 4;
 end
 
-
 switch ts
     case 1
         outimg = img;
@@ -19,7 +18,5 @@ switch ts
     case 2
         outimg = rot90(rot90(rot90(img)));
 end
-
-
 end
 

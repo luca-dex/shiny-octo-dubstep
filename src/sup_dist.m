@@ -1,7 +1,7 @@
 function [ rms, transf ] = sup_dist( img1, img2 )
 
 if length(img1) ~= length(img2)
-    error('sup_dist: PORCODIO');
+    error('sup_dist: ERROR!');
 end
 
 rms_arr = zeros(1,8);
@@ -24,6 +24,5 @@ a = single(reshape(img2, [1, n]));
 b = single(reshape(img1, [1, n]));
 
 rms = sqrt(( sum(b.^2) + s * (s*sum(a.^2) - 2*dot(a,b) + 2*o*sum(a)) + o*(n*o - 2*sum(b)) ) / n);
-
 
 end

@@ -19,7 +19,7 @@ for i=1:length(encoding)
     o = encoding(i,9);
     
     if sd ~= 2*sr
-        display '-----------------------------> PORCODIO';
+        display '-----------------------------> ERROR!';
     end
     
     block = single(img(xd:xd+sd-1, yd:yd+sd-1));
