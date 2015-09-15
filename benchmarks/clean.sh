@@ -1,0 +1,1 @@
+rm -rf decoded_fiasco images_fiasco images_pgm images_jpeg
