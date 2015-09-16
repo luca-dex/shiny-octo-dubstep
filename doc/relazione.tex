@@ -6,7 +6,7 @@
 \usepackage{minted}
 \usepackage{amsmath, amsfonts}
 \usepackage{graphicx}
-
+\usepackage{epstopdf}
 \usepackage{caption}
 \usepackage{subcaption}
 
@@ -567,6 +567,49 @@ La funzione principale è \texttt{sup\_dist} che si occupa di effettuare il conf
 La seconda funzione \texttt{least\_squared\_params} si occupa, date due immagini, di trovare i valori di $s$ e di $o$ secondo le equazioni viste nel precedente capitolo, righe 17 - 19.
 
 La terza funzione, \texttt{dsh} si occupa, date due immagini e calcolati i valori di $s$ e di $o$ tramite la precedente funzione, di calcolare il valore della distanza, righe 29 e 30.
+
+\section{Output dell'esecuzione}
+
+Dopo aver introdotto gli algoritmi che abbiamo sviluppato vediamo brevemente quale è il risultato dell'encoding e del deconding. Prendiamo ad esempio un'immagine digitale, riportata in Figura \ref{fig:girl}, con il viso di una ragazza. L'immagine è in formato BITMAP a 8bit in scala di grigi e ha dimensioni di $512 \times 512$ pixel. Abbiamo scelto questa immagine perchè ha delle vaste zone di colore uniforme, come il viso o lo sfondo e delle zone estremamente complesse, come i capelli. Questi dettagli ci hanno permesso di valutare la bontà della nostra implementazione.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[scale=0.4]{images/girl.pdf} 
+\caption{girl grayscale, $128 \times 128$ pixels.}
+\label{fig:girl}
+\end{figure}
+
+L'immagine è stata codificata con i seguenti parametri:
+\begin{itemize}
+\item \texttt{dom\_range: [4, 8, 16, 32]} 
+\item \texttt{l: 2}
+\item \texttt{min\_rms: 4}
+\item \texttt{min\_rms: 10}
+\end{itemize}
+
+L'output prodotto dal nostro algoritmo è una tabella di $36760 \times 9$ elementi, le cui dimensioni sono di circa 1MB. Il tempo di encoding è stato di circa 10 ore su una macchina con processore \textit{Pentium i7@2.4GHz} e 4 Gb di RAM. Non applicando nessuna ottimizzazione o compressione della tabella stessa il peso rimane piuttosto alto. 
+
+Di seguito, in Figura \ref{fig:girls} riportiamo gli step di encoding, ad ogni passo vengono applicate le trasformazioni descritte nella tabella prodotta, a partire da un'immagine completamente nera. Abbiamo eseguito dodici step di deconding, ma arrivati già al decimo si può notare anche a occhio come le variazioni siano minime. Questo è il livello di dettaglio massimo che siamo riusciti ad ottenere con l'implementazione proposta.
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[scale=0.35]{images/girl01} 
+\includegraphics[scale=0.35]{images/girl02} 
+\includegraphics[scale=0.35]{images/girl03} 
+\includegraphics[scale=0.35]{images/girl04}
+\includegraphics[scale=0.35]{images/girl05}
+\includegraphics[scale=0.35]{images/girl06}
+\includegraphics[scale=0.35]{images/girl07}
+\includegraphics[scale=0.35]{images/girl08}
+\includegraphics[scale=0.35]{images/girl09}
+\includegraphics[scale=0.35]{images/girl10}
+\includegraphics[scale=0.35]{images/girl11}
+\includegraphics[scale=0.35]{images/girl12}         
+\caption{12 step di deconding dell'immagine della ragazza.}
+\label{fig:girls}
+\end{figure}
+
+
 
 \chapter{Test, benchmarks}
 
