@@ -43,7 +43,7 @@
 
 Con il termine ``Fractal image Compression'' si va ad indicare una famiglia di tecniche di compressione di immagini (o video) basate sulle proprietà matematiche dei frattali. Tali metodi di compressione si rivelano sopra ogni altra cosa adatti a comprimere textures e immagini naturali, o, più in generale, immagini che sono caratterizzate da un elevato livello di \emph{self-similarity} (ovvero aventi delle parti che, al netto di rotazioni e ingrandimenti/riduzioni, somigliano ad altre parti dell'immagine).
 
-La compressione di immagini tramite frattali (così come altre, più diffuse, ad esempio \textit{JPEG}) appartiene a quel gruppo di tecniche di compressione \emph{lossy}, ovvero in cui la compressione dell'immagine avviene al costo di una perdita di informazione. Tuttavia, a differenza di quanto accade quando si utilizza uno dei metodi di compressione basati sui pixel (come \textit{JPEG}, \textit{GIF} o \textit{MPEG}), nella compressione frattale nessuna parte dell'immagine viene effettivamente memorizzata. Ciò che viene memorizzato è invece la \emph{struttura interna} dell'immagine (ad esempio un indice di quali parti, effettuate le dovute trasformazioni, sono simili ad altre parti). 
+La compressione di immagini tramite frattali (così come altre, più diffuse, ad esempio JPEG) appartiene a quel gruppo di tecniche di compressione \emph{lossy}, ovvero in cui la compressione dell'immagine avviene al costo di una perdita di informazione. Tuttavia, a differenza di quanto accade quando si utilizza uno dei metodi di compressione basati sui pixel (come JPEG, GIF o MPEG), nella compressione frattale nessuna parte dell'immagine viene effettivamente memorizzata. Ciò che viene memorizzato è invece la \emph{struttura interna} dell'immagine (ad esempio un indice di quali parti, effettuate le dovute trasformazioni, sono simili ad altre parti). 
 
 Poiché nessun pixel dell'immagine originale viene memorizzato, la decompressione parte da un singolo pixel, di colore qualsiasi, e procede alla ricostruzione dell'immagine originale applicando iterativamente una mappa ricavata dalla struttura interna dell'immagine originale.
 
@@ -62,7 +62,7 @@ Un frattale è un oggetto geometrico che si ripete nella sua forma, allo stesso 
 \item esiste un algoritmo relativamente semplice per costruire $F$.
 \end{itemize}
 
-Un esempio di oggetto geometrico secondo i principi di costruzione di un frattale e che rispetta le proprietà elencate è la curva di \textit{Koch}. La costruzione comincia con una linea di lunghezza $1$ chiamata \textit{initiatior}. Da questa linea si rimuove il terzo centrale e lo si sostituisce con due linee della stessa lunghezza della parte rimossa. Questa nuova forma viene chiamata \textit{generator}. La prima parte della costruzione è mostrata in figura \ref{fig:k1}.
+Un esempio di oggetto geometrico secondo i principi di costruzione di un frattale e che rispetta le proprietà elencate è la curva di Koch. La costruzione comincia con una linea di lunghezza $1$ chiamata \emph{initiatior}. Da questa linea si rimuove il terzo centrale e lo si sostituisce con due linee della stessa lunghezza della parte rimossa. Questa nuova forma viene chiamata \emph{generator}. La prima parte della costruzione è mostrata in figura \ref{fig:k1}.
 
 \begin{figure}[!ht]
 \centering
@@ -71,7 +71,7 @@ Un esempio di oggetto geometrico secondo i principi di costruzione di un frattal
 \label{fig:k1}
 \end{figure}
 
-La regola può essere nuovamente applicata su ogni linea, così da andare a sostituirla ogni volta come fanno nel passaggio da \textit{initiator} a \textit{generator}. Il secondo livello è visibile in figura \ref{fig:k2}.
+La regola può essere nuovamente applicata su ogni linea, così da andare a sostituirla ogni volta come fanno nel passaggio da \emph{initiator} a \emph{generator}. Il secondo livello è visibile in figura \ref{fig:k2}.
 
 \begin{figure}[!ht]
 \centering
@@ -360,7 +360,7 @@ La procedura \textproc{score} restituisce una trasformazione $w_i$ ed uno $score
 
 \chapter{Aspetti Pratici e implementazione}
 
-In questo capitolo forniamo un'implementazione didattica dell'algoritmo di compressione usando frattali per permettere di comprenderne gli aspetti pratici . Il codice è stato scritto in linguaggio MATLAB ed è possibile scaricarlo da \url{https://github.com/luca-dex/shiny-octo-dubstep}.
+In questo capitolo forniamo un'implementazione didattica dell'algoritmo di compressione usando frattali per permettere di comprenderne gli aspetti pratici . Il codice è stato scritto in linguaggio MATLAB ed è disponibile all'indirizzo \url{github.com/luca-dex/shiny-octo-dubstep}.
 
 \section{Creazione del Dominio}
 
@@ -518,7 +518,7 @@ end
 
 Come prima operazione si valuta se il partizionamento produce sottoimmagini sufficientemente piccole (riga 9) e, nel caso questo non avvenga, si procede a dividere in 4 parti l'immagine considerata e ad applicare ricorsivamente la procedura (righe 10 - 19). 
 
-Successivamente, per ognuna della quattro sottoimmagini generate tramite il partizionamento con \textit{quadtree}, vengono calcolati i valore della distanza $d$ e della rotazione dell'immagine del dominio. Ad esempio per la sottoimmagine in alto a sinistra la procedura parte col considerare tutti gli elementi del dominio, (riga 26) e per ognuno, tramite la funzione \texttt{sup\_dist} (riga 33) verificare se viene trovato un valore di distanza $d$ minore di quelli calcolati fino a quel momento. Per fare questa operazione viene considerata anche ogni possibile roto-traslazione dell'immagine stessa. Se il valore è effettivamente minore, questo viene memorizzato (riga 36) unitamente alle indicazioni sulla rotazione e all'indice di posizione dell'elemento del dominio (righe 37 e 38). Questa operazione viene ripetuta per tutte e quattro le sottoimmagini.
+Successivamente, per ognuna della quattro sottoimmagini generate tramite il partizionamento con \emph{quadtree}, vengono calcolati i valore della distanza $d$ e della rotazione dell'immagine del dominio. Ad esempio per la sottoimmagine in alto a sinistra la procedura parte col considerare tutti gli elementi del dominio, (riga 26) e per ognuno, tramite la funzione \texttt{sup\_dist} (riga 33) verificare se viene trovato un valore di distanza $d$ minore di quelli calcolati fino a quel momento. Per fare questa operazione viene considerata anche ogni possibile roto-traslazione dell'immagine stessa. Se il valore è effettivamente minore, questo viene memorizzato (riga 36) unitamente alle indicazioni sulla rotazione e all'indice di posizione dell'elemento del dominio (righe 37 e 38). Questa operazione viene ripetuta per tutte e quattro le sottoimmagini.
 
 Ora che per ogni sottoimmagine è stata individuata la migliore copertura si passa a verificare se questa effettivamente soddisfava il valore di threshold voluto e di dimensioni minime. In caso positivo si memorizzano tutti i valori necessari, in caso contrario si applica ricorsivamente la funzione al quarto di immagine. Ad esempio per la sottoimmagine in alto a sinistra la procedura parte con il verificare se le soglie di threshold e dimensione sono rispettate (riga 73) e in caso negativo si riapplica la procedura a questo quarto di immagine (righe 74 - 75). Nel caso in cui i valori di soglia siano rispettati invece si calcolano i valori di \texttt{s} e di \texttt{o} (riga 78) e si memorizza il tutto nella mappa $W$ (righe 79 e 80).  Questa operazione viene ripetuta per tutte e quattro le sottoimmagini.
 
@@ -526,7 +526,7 @@ A questo punto l'encoding è terminato, in quanto si ha a disposizione la mappa 
 
 \section{Metrica}
 
-Nel precedente frammento di codice è stata introdotta la funzione \texttt{sup\_dist} per il calcolo della distanza tra immagine nel dominio e immagine proveniente dal \textit{quadtree}, di seguito è riportato il funzionamento effettivo di questa funzione, che rispecchia le equazioni viste in precedenza per il calcolo della distanza basandosi sui valori ottimali di $s$ e $o$.
+Nel precedente frammento di codice è stata introdotta la funzione \texttt{sup\_dist} per il calcolo della distanza tra immagine nel dominio e immagine proveniente dal \emph{quadtree}, di seguito è riportato il funzionamento effettivo di questa funzione, che rispecchia le equazioni viste in precedenza per il calcolo della distanza basandosi sui valori ottimali di $s$ e $o$.
 
 \begin{minted}[linenos=true]{matlab}
 function [ rms, transf ] = sup_dist( img1, img2 )
@@ -562,15 +562,15 @@ function [ rms ] = dsh(img1, img2)
 end
 \end{minted}
 
-La funzione principale è \texttt{sup\_dist} che si occupa di effettuare il confronto tra la sottoimmagine presa in cosiderazione e tutte le possibili 8 rototraslazioni dell'elemento del dominio, righe 4 - 8. Questa funzione restituisce poi il valore della distanza e la rotazione, rappresentata da una mappa di valori da 1 a 8, righe 10 e 11.
+La funzione principale è \texttt{sup\_dist}, che si occupa di effettuare il confronto tra la sottoimmagine presa in cosiderazione e tutte le possibili 8 rototraslazioni dell'elemento del dominio (righe 4 - 8). Questa funzione restituisce poi il valore della distanza e la rotazione, rappresentata da una mappa di valori da 1 a 8, (righe 10 e 11).
 
-La seconda funzione \texttt{least\_squared\_params} si occupa, date due immagini, di trovare i valori di $s$ e di $o$ secondo le equazioni viste nel precedente capitolo, righe 17 - 19.
+La seconda funzione, \texttt{least\_squared\_params}, si occupa, date due immagini, di trovare i valori di $s$ e di $o$ secondo le equazioni viste nel precedente capitolo (righe 17 - 19).
 
-La terza funzione, \texttt{dsh} si occupa, date due immagini e calcolati i valori di $s$ e di $o$ tramite la precedente funzione, di calcolare il valore della distanza, righe 29 e 30.
+La terza funzione, \texttt{dsh}, si occupa, date due immagini e calcolati i valori di $s$ e di $o$ tramite la precedente funzione, di calcolare il valore della distanza (righe 29 e 30).
 
 \section{Output dell'esecuzione}
 
-Dopo aver introdotto gli algoritmi che abbiamo sviluppato vediamo brevemente quale è il risultato dell'encoding e del deconding. Prendiamo ad esempio un'immagine digitale, riportata in Figura \ref{fig:girl}, con il viso di una ragazza. L'immagine è in formato BITMAP a 8bit in scala di grigi e ha dimensioni di $512 \times 512$ pixel. Abbiamo scelto questa immagine perchè ha delle vaste zone di colore uniforme, come il viso o lo sfondo e delle zone estremamente complesse, come i capelli. Questi dettagli ci hanno permesso di valutare la bontà della nostra implementazione.
+Dopo aver introdotto gli algoritmi che abbiamo sviluppato vediamo brevemente quale è il risultato dell'encoding e del deconding. Prendiamo ad esempio un'immagine digitale, riportata in Figura \ref{fig:girl}, con il viso di una ragazza. L'immagine è in formato BITMAP a 8 bits in scala di grigi e ha dimensioni $512 \times 512$ pixel. Abbiamo scelto questa immagine perché ha delle vaste zone di colore uniforme, come il viso o lo sfondo, e altre zone estremamente complesse, come quelle coperte dai capelli. Questi dettagli ci hanno permesso di valutare la bontà della nostra implementazione.
 
 \begin{figure}[ht]
 \centering
@@ -580,16 +580,17 @@ Dopo aver introdotto gli algoritmi che abbiamo sviluppato vediamo brevemente qua
 \end{figure}
 
 L'immagine è stata codificata con i seguenti parametri:
+
 \begin{itemize}
-\item \texttt{dom\_range: [4, 8, 16, 32]} 
-\item \texttt{l: 2}
-\item \texttt{min\_rms: 4}
-\item \texttt{min\_rms: 10}
+\item \texttt{dom\_range = [4, 8, 16, 32]} 
+\item \texttt{l = 2}
+\item \texttt{min\_rms = 4}
+\item \texttt{min\_rms = 10}
 \end{itemize}
 
-L'output prodotto dal nostro algoritmo è una tabella di $36760 \times 9$ elementi, le cui dimensioni sono di circa 1MB. Il tempo di encoding è stato di circa 10 ore su una macchina con processore \textit{Pentium i7@2.4GHz} e 4 Gb di RAM. Non applicando nessuna ottimizzazione o compressione della tabella stessa il peso rimane piuttosto alto. 
+L'output prodotto dal nostro algoritmo è una tabella di $36760 \times 9$ elementi, le cui dimensioni complessiva sono di circa 1MB. Il tempo di encoding è stato di circa 10 ore su una macchina con processore Pentium  \emph{i7 @ 2.4GHz} e 4 GB di RAM. Non applicando nessuna ottimizzazione o compressione della tabella stessa il peso rimane piuttosto alto. 
 
-Di seguito, in Figura \ref{fig:girls} riportiamo gli step di encoding, ad ogni passo vengono applicate le trasformazioni descritte nella tabella prodotta, a partire da un'immagine completamente nera. Abbiamo eseguito dodici step di deconding, ma arrivati già al decimo si può notare anche a occhio come le variazioni siano minime. Questo è il livello di dettaglio massimo che siamo riusciti ad ottenere con l'implementazione proposta.
+Di seguito, in Figura \ref{fig:girls}, riportiamo la sequenza di immagini successive che si ottengono durante l'iterazione della procedura di decoding (ovvero l'applicazione della funzione $W$ che definisce l'\emph{iterated system} associato all'immagine di partenza). Ad ogni passo vengono applicate le trasformazioni descritte nella tabella prodotta, a partire da un'immagine completamente nera. Sono stati eseguiti complessivamente 12 step, ma già dal decimo in poi si può notare, anche a occhio, come le variazioni siano minime. Il risultato finale (quello raffigurato nell'ultima immagine) presenta dettaglio massimo che siamo riusciti ad ottenere con l'implementazione MATLAB qui sopra descritta. L'immagine non è stata ricostruita con un grande livello di dettaglio, ma dobbiamo osservare che la figura di partenza (quella scelta per testare l'implementazione) era estremamente complessa.
 
 \begin{figure}[!ht]
 \centering
@@ -605,7 +606,7 @@ Di seguito, in Figura \ref{fig:girls} riportiamo gli step di encoding, ad ogni p
 \includegraphics[scale=0.35]{images/girl10}
 \includegraphics[scale=0.35]{images/girl11}
 \includegraphics[scale=0.35]{images/girl12}         
-\caption{12 step di deconding dell'immagine della ragazza.}
+\caption{12 step di decoding per l'immagine della ragazza.}
 \label{fig:girls}
 \end{figure}
 
@@ -615,7 +616,7 @@ Di seguito, in Figura \ref{fig:girls} riportiamo gli step di encoding, ad ogni p
 
 Come già sottolineato nell'introduzione, un aspetto importante da considerare durante la trattazione di tecniche di compressione ``non ortodosse'' è quello relativo alla loro effettiva usabilità in scenari realistici. È per questo motivo molto importante, una volta terminata la trattazione degli aspetti teorici della tecnica, effettuare una serie di test e benchmarks che consentano di effettuare una comparazione (che sia il più possibile oggettiva) tra i risultati ottenuti con la tecnica di compressione descritta e quelli ottenibili utilizzando invece una delle tecniche di compressione tra quelle più comunemente utilizzate.
 
-Poiché l'implementazione MATLAB descritta nel precedente capitolo è stata sviluppata esclusivamente per fini ``didattici'', e pertanto senza che venisse posta particolare attenzione ad aspetti quali effettiva usabilità in contesti reali e prestazioni del codice su immagini di dimensioni realistiche, abbiamo scelto di effettuare i nostri test utilizzando una libreria di compressione basata su frattali che fosse, oltre che più flessibile, anche più performante del codice da noi sviluppato. La nostra scelta è ricaduta su \emph{Fiasco} \cite{fiasco} \cite{IEEE} \cite{ULL}, una libreria open source di compressione frattale sviluppata in C.
+Poiché l'implementazione MATLAB descritta nel precedente capitolo è stata sviluppata esclusivamente per fini ``didattici'', e pertanto senza che venisse posta particolare attenzione ad aspetti quali effettiva usabilità in contesti reali e prestazioni del codice su immagini di dimensioni realistiche, abbiamo scelto di effettuare i nostri test utilizzando una libreria di compressione basata su frattali che fosse, oltre che più flessibile, anche più performante del codice da noi sviluppato. La nostra scelta è ricaduta su \emph{Fiasco} \cite{fiasco} \cite{IEEE} \cite{ULL}, una libreria \emph{open source} di compressione frattale implementata in C.
 
 Dato che la compressione tramite frattali è inerentemente \emph{lossy}, la scelta naturale per il formato con cui effettuare la comparazione è rappresentata dallo standard JPEG\cite{jpeg}. Sono stati effettuati test di due differenti tipi: una prima batteria di test pensata per valutare la capacità delle due tecniche di compressione di gestire immagini di varie dimensioni (anche molto grandi), anche valutando i tempi di codifica e decodifica, ed una seconda batteria di test in cui si è cercato di effettuare una comparazione  delle qualità delle immagini decompresse. 
 
@@ -692,7 +693,7 @@ Immagine & JPEG & Fiasco & Rapporto \\
 \caption{I tempi di codifica}
 \end{figure}
 
-Appare ora evidente il motivo per cui Fiasco ha rinunciato a comprimere le immagini più grandi: l'operazione di codifica è estremamente costosa, e i tempi di codifica vanno peggiorando esponenzialmente. JPEG comprime invece tutte le immagini testate in tempi estremamente rapidi.
+Appare ora evidente il motivo per cui Fiasco ha rinunciato a comprimere le immagini più grandi: l'operazione di codifica è estremamente costosa, e i tempi di codifica vanno peggiorando esponenzialmente. JPEG comprime invece tutte le immagini testate in tempi molto rapidi.
 
 \section{ Qualità delle immagini }
 
@@ -733,9 +734,9 @@ Andando a zoomare su un particolare dell'immagine, appare evidente come il rappo
 
 In questa appendice diamo una breve descrizione di come utilizzare il codice sorgente con cui sono stati realizzati gli esempi e i bechmarks utilizzati nel corso dell'esposizione. 
 
-Per l'esecuzione del codice MATLAB è necessario aver installata l'\textit{Image Processing Toolbox}\footnote{\url{mathworks.com/products/image/}}.
+Per l'esecuzione del codice MATLAB è necessario aver installata l'\emph{Image Processing Toolbox}\footnote{\url{mathworks.com/products/image/}}.
 
-Per l'esecuzione dei benchmarks è necessario che siano installati sul sistema \textit{ImageMagick}\footnote{\url{www.imagemagick.org/}}, libreria per la manipolazione di immagini utilizzata per effettuare la compressione in formato JPEG, e \textit{Fiasco}\footnote{\url{github.com/l-tamas/Fiasco}}, libreria sperimentale per la compressione di immagini utilizzando FIC.
+Per l'esecuzione dei benchmarks è necessario che siano installati sul sistema \emph{ImageMagick}\footnote{\url{www.imagemagick.org/}}, libreria per la manipolazione di immagini utilizzata per effettuare la compressione in formato JPEG, e Fiasco\footnote{\url{github.com/l-tamas/Fiasco}}, libreria sperimentale per la compressione di immagini utilizzando FIC.
 
 \noindent La prima cosa da fare è clonare il repository che contiene tutti i sorgenti:
 \shellcmd{git clone https://github.com/luca-dex/shiny-octo-dubstep}
