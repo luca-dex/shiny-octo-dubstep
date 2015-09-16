@@ -565,7 +565,15 @@ La terza funzione, \texttt{dsh} si occupa, date due immagini e calcolati i valor
 
 \chapter{Test, benchmarks}
 
-asd
+Come già sottolineato nell'introduzione, un aspetto importante da considerare durante la trattazione di tecniche di compressione ``non ortodosse'' è quello relativo alla loro effettiva usabilità in scenari realistici. È per questo motivo molto importante, una volta terminata la trattazione degli aspetti teorici della tecnica, effettuare una serie di test e benchmarks che consentano di effettuare una comparazione (che sia il più possibile oggettiva) tra i risultati ottenuti con la tecnica di compressione descritta e quelli ottenibili utilizzando invece una delle tecniche di compressione tra quelle più comunemente utilizzate.
+
+Poiché l'implementazione MATLAB descritta nel precedente capitolo è stata sviluppata esclusivamente per fini ``didattici'', e pertanto senza che venisse posta particolare attenzione ad aspetti quali effettiva usabilità in contesti reali e prestazioni del codice su immagini di dimensioni realistiche, abbiamo scelto di effettuare i nostri test utilizzando una libreria di compressione basata su frattali che fosse, oltre che più flessibile, anche più performante del codice da noi sviluppato. La nostra scelta è ricaduta su \emph{Fiasco}\footnote{Fractal Image And Sequence COdec}\footnote{Ullrich Hafner, Juergen Albert, Stefan Frank, and Michael Unger.  Weighted Finite Automata for Video Compression, IEEE Journal on Selected Areas In Communications, January 1998}\footnote{Ullrich  Hafner.  Low Bit-Rate Image and Video Coding with Weighted Finite Automata, Ph.D. thesis, Mensch \& Buch Verlag, ISBN 3-89820-002-7, October 1999}, una libreria open source di compressione frattale sviluppata in C.
+
+Dato che la compressione tramite frattali è inerentemente \emph{lossy}, la scelta naturale per il formato con cui effettuare la comparazione è rappresentata dallo standard JPEG\footnote{The JPEG Standard - \texttt{ISO/IEC 10918}}. Sono stati effettuati test di due differenti tipi: una prima batteria di test pensata per valutare la capacità delle due tecniche di compressione di gestire immagini di varie dimensioni (anche molto grandi), anche valutando i tempi di codifica e decodifica, ed una seconda batteria di test in cui si è cercato di effettuare una comparazione dei rapporti di compressione ottenuti, e della qualità dell'immagine ricavata. 
+
+\section{ Tempi di codifica }
+
+\section{ Rapporti di compressione, qualità }
 
 \appendix
 
@@ -608,6 +616,22 @@ Una volta che tutti i parametri sono configurati può essere lanciato l'algoritm
 Una volta che l'immagine è compressa può essere ricostruita con la funzione \texttt{decode\_all}. Dentro a questa funzione deve essere configurato il parametro \texttt{workspace} con il path del workspace salvato dalla funzione precedente. Questa funzione mostra per prima cosa l'immagine originale e, ogni volta che viene eseguito un click all'interno dell'immagine viene mostrato uno step di ricostruzione.
 
 \section{Benchmark}
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
