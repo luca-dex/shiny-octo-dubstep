@@ -1,10 +1,10 @@
 /doc/relazione.pdf
 ## image folders
-./benchmarks/images_pgm/*
-./benchmarks/images_fiasco/*
-./benchmarks/images_jpeg/*
-./benchmarks/decoded_fiasco/*
-./benchmarks/decoded_jpeg/*
+/benchmarks/images_pgm/*
+/benchmarks/images_fiasco/*
+/benchmarks/images_jpeg/*
+/benchmarks/decoded_fiasco/*
+/benchmarks/decoded_jpeg/*
 
 ## Core latex/pdflatex auxiliary files:
 *.aux
