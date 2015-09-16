@@ -9,14 +9,16 @@
 
 \usepackage{parskip}
 \usepackage{color}
+\usepackage{pifont}
 
 \usepackage{placeins}
 
 \usepackage{algpseudocode}
 \usepackage{framed}
-
-
 \usepackage{url}
+
+\newcommand{\yep}{\ding{51}}%
+\newcommand{\nope}{\ding{55}}%
 
 \newtheorem{teorema}{Teorema}
 \newtheorem{lemma}[teorema]{Lemma}
@@ -571,9 +573,76 @@ Poiché l'implementazione MATLAB descritta nel precedente capitolo è stata svil
 
 Dato che la compressione tramite frattali è inerentemente \emph{lossy}, la scelta naturale per il formato con cui effettuare la comparazione è rappresentata dallo standard JPEG\footnote{The JPEG Standard - \texttt{ISO/IEC 10918}}. Sono stati effettuati test di due differenti tipi: una prima batteria di test pensata per valutare la capacità delle due tecniche di compressione di gestire immagini di varie dimensioni (anche molto grandi), anche valutando i tempi di codifica e decodifica, ed una seconda batteria di test in cui si è cercato di effettuare una comparazione dei rapporti di compressione ottenuti, e della qualità dell'immagine ricavata. 
 
-\section{ Tempi di codifica }
+\section{ Efficienza ed efficacia della codifica }
 
-\section{ Rapporti di compressione, qualità }
+Per valutare efficienza (ovvero la rapidità della codifica) ed efficacia (ovvero i rapporti di compressione ottenuti) della compressione frattale e della compressione JPEG, sono state utilizzate sette versioni, differenti in dimensioni, di una immagine campione raffigurante un paesaggio naturale. Nella tabella seguente sono riportati i nomi, le dimensioni ed il peso delle immagini utilizzate. Tutte le immagini sono figure in \emph{grayscale} salvate come \texttt{.pgm}.
+
+\begin{center}
+\begin{tabular}{c||c|c}
+Immagine & Dimensioni & Peso \\ 
+\hline 
+\texttt{california\_coast\_320} & 320 $\times$ 240 & 0.07 MB \\
+\hline 
+\texttt{california\_coast\_640} & 640 $\times$ 480 & 0.30 MB \\
+\hline 
+\texttt{california\_coast\_800} & 800 $\times$ 600 & 0.48 MB \\
+\hline 
+\texttt{california\_coast\_1200} & 1200 $\times$ 900 & 1.10 MB \\
+\hline 
+\texttt{california\_coast\_1600} & 1600 $\times$ 1200 & 1.90 MB \\
+\hline 
+\texttt{california\_coast\_2400} & 2400 $\times$ 1800 & 4.30 MB \\
+\hline 
+\texttt{california\_coast\_3648} & 3648 $\times$ 2736 & 10.0 MB \\
+\end{tabular} 
+\end{center}
+
+In un primo test abbiamo cercato di valutare la effettiva capacità delle due librerie di comprimere le immagini di test, e i rapporti di compressione ottenuti, lasciando in un primo momento da parte la valutazione dell'efficienza dell'operazione di codifica (ovvero il tempo impiegato per comprimere l'immagine). I risultati del test sono riportati in tabella
+
+\begin{center}
+\begin{tabular}{c||cc|cc}
+Immagine & \multicolumn{2}{c|}{JPEG} & \multicolumn{2}{c}{Fiasco} \\ 
+\hline 
+ & \tiny{Peso} & \tiny{Compressione} & \tiny{Peso} & \tiny{Compressione} \\ 
+\texttt{california\_coast\_320} & 026.5 kB & 2.64x & 02.7 kB & 25.9x \\
+\texttt{california\_coast\_640} & 100.9 kB & 2.97x & 10.5 kB & 28.5x \\
+\texttt{california\_coast\_800} & 147.3 kB & 3.25x & 16.3 kB & 29.4x \\
+\texttt{california\_coast\_1200} & 330.4 kB & 3.32x & \multicolumn{2}{c}{\nope} \\
+\texttt{california\_coast\_1600} & 515.5 kB & 3.68x & \multicolumn{2}{c}{\nope} \\
+\texttt{california\_coast\_2400} & 1.00 MB & 4.30x & \multicolumn{2}{c}{\nope} \\
+\texttt{california\_coast\_3648} & 1.90 MB & 5.26x & \multicolumn{2}{c}{\nope} \\
+\end{tabular} 
+\end{center}
+
+Mentre la libreria JPEG è in grado di comprimere senza nessuna difficoltà le immagini utilizzate per il test, Fiasco fallisce sulle ultime 4 immagini con un \texttt{Maximum number of states reached!} error. Considerando che il primo file che Fiasco non riesce a trattare è una modesta immagine $1200 \times 900$ del peso di 1.1 MB, questo test rende abbastanza evidente come la compressione tramite frattali sia di fatto eccessivamente costosa (da un punto di vista computazionale) per permetterne l'utilizzo con immagini ad alta risoluzione. 
+
+D'altra parte, sulle immagini che entrambe le librerie hanno potuto comprimere, appare evidente che la compressione tramite frattali consente di ottenere rapporti di compressione molto competitivi (un ordine di grandezza meglio del JPEG in questo caso). Va tuttavia sottolineato che il fattore di compressione andrà valutato anche sulla base dei tempi di codifica e della qualità dell'immagine ricavata successivamente, in fase di decompressione.
+
+I tempi di compressione sono riportati nella tabella seguente:
+
+\begin{center}
+\begin{tabular}{c||cc|c}
+Immagine & JPEG & Fiasco & Rapporto \\ 
+\hline 
+\texttt{california\_coast\_320} & 0.006s & 0.549s & 91.5x\\ 
+\hline 
+\texttt{california\_coast\_640} & 0.010s & 8.620s & 861x \\
+\hline 
+\texttt{california\_coast\_800} & 0.016s & 18.51s & 1156x \\
+\hline 
+\texttt{california\_coast\_1200} & 0.028s & \nope & -- \\
+\hline 
+\texttt{california\_coast\_1600} & 0.042s & \nope & -- \\
+\hline
+\texttt{california\_coast\_2400} & 0.087s & \nope & -- \\
+\hline 
+\texttt{california\_coast\_3648} & 0.183s & \nope & -- \\
+\end{tabular} 
+\end{center}
+
+Appare ora evidente il motivo per cui Fiasco ha rinunciato a comprimere le immagini più grandi: l'operazione di codifica è estremamente costosa, e i tempi di codifica vanno peggiorando esponenzialmente.
+
+\section{ Qualità delle immagini }
 
 \appendix
 
@@ -581,9 +650,9 @@ Dato che la compressione tramite frattali è inerentemente \emph{lossy}, la scel
 
 In questa appendice daremo una breve descrizione di come utilizzare il codice sorgente con cui sono stati realizzati gli esempi e i bechmarcks utilizzati nei vari capitoli di questo documento. 
 
-Per l'esecuzione del codice MATLAB è necessario che sia installato il plugin \textit{Image Processing Toolbox}\footnote{Maggiori dettagli su \url{http://mathworks.com/products/image/}}.
+Per l'esecuzione del codice MATLAB è necessario che sia installato il plugin \textit{Image Processing Toolbox}\footnote{\url{http://mathworks.com/products/image/}}.
 
-Per l'esecuzione dei benchmark è necessario che siano installati sul sistema \textit{ImageMagick}\footnote{Maggiori dettagli su \url{http://www.imagemagick.org/}}, libreria per la manipolazione di immagini utilizzata per effettuare la compressione in formato JPEG, e \textit{Fiasco}\footnote{Maggiori dettagli su \url{http://github.com/l-tamas/Fiasco}}, libreria sperimentale per la compressione di immagini utilizzando FIC.
+Per l'esecuzione dei benchmark è necessario che siano installati sul sistema \textit{ImageMagick}\footnote{\url{http://www.imagemagick.org/}}, libreria per la manipolazione di immagini utilizzata per effettuare la compressione in formato JPEG, e \textit{Fiasco}\footnote{\url{http://github.com/l-tamas/Fiasco}}, libreria sperimentale per la compressione di immagini utilizzando FIC.
 
 \noindent La prima cosa da fare è clonare il repository che contiene tutti i sorgenti:
 \shellcmd{git clone https://github.com/luca-dex/shiny-octo-dubstep}
@@ -620,17 +689,6 @@ Una volta che l'immagine è compressa può essere ricostruita con la funzione \t
 
 
  
-
-
-
-
-
-
-
-
-
-
-
 
 
 
