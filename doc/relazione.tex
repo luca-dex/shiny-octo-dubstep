@@ -260,26 +260,26 @@ per tutti gli $i$. In termini di $R_i$ ed $D_i$ (i concreti pezzi di immagini su
 
 \subsection*{Metrica}
 
-Come abbiamo visto prima la comparazione tra le due immagini avviene tramite la radice della media quadratica. Usare questa metrica ci consente di calcolare i valori ottimali per $s_i$ e di $o_i$ in maniera semplice. In particolare dati due quadrati contenenti $n$ valori di luminosità dei pixel $ai, \dots, a_n$ per $D_i$ e $b_1, \dots, b_n$ per $R_i$, possiamo cercare i valori di $s$ e di $o$ che minimizzano la quantità:
+Come abbiamo visto, la comparazione tra le due immagini avviene tramite la radice della media quadratica. L'utilizzo di questa metrica ci consente di calcolare i valori ottimali per $s_i$ e di $o_i$ in maniera diretta. In particolare, dati due quadrati contenenti $n$ valori di luminosità dei pixel $a_1, \dots, a_n$ per $D_i$ e $b_1, \dots, b_n$ per $R_i$, possiamo cercare i valori di $s$ e di $o$ che minimizzano la quantità:
 
 \[
 R = \sum_{i=1}^{n}{\left( s \cdot a_i + o - b_i \right) }
 \]
 
-Questa quantità ci fornisce i valori di contrasto e luminosità che fanno si che la trasformazione dai i valori di $a_i$  a quelli di $b_i$ abbia la minima distanza possibile. Il valore minimo di $R$ si ha quando le derivate parziali di $s$ e di $o$ si azzerano e questa condizione si ha quando:
+Questa quantità ci fornisce i valori di contrasto e luminosità che fanno si che la trasformazione dai i valori di $a_i$  a quelli di $b_i$ abbia la minima distanza possibile. Il valore minimo di $R$ si ha quando le derivate parziali di $s$ e di $o$ si azzerano, ovvero quando
 
 \[
-s = \dfrac{\left[ n \sum\limits_{i=1}^{n}{a_i b_i} - \sum\limits_{i=1}^{n}{a_i} \sum\limits_{i=1}^{n}{b_i} \right] }
-{\left[ n \sum\limits_{i=1}^{n}{a_i^2} - {\left( \sum\limits_{i=1}^{n}{a_i} \right)}^2 \right] }
+s = \dfrac{ n \sum\limits_{i=1}^{n}{a_i b_i} - \sum\limits_{i=1}^{n}{a_i} \sum\limits_{i=1}^{n}{b_i} }
+{n \sum\limits_{i=1}^{n}{a_i^2} - {\left( \sum\limits_{i=1}^{n}{a_i} \right)}^2 }
 \]
 
 e
 
 \[
-o = \frac{1}{n} \left[ \sum\limits_{i=1}^{n}{b_i} - s \sum\limits_{i=1}^{n}{a_i} \right]
+o = \frac{1}{n} \left( \sum\limits_{i=1}^{n}{b_i} - s \sum\limits_{i=1}^{n}{a_i} \right)
 \]
 
-A questo punto, avendo i valori ottimali di $s$ e di $o$ possiamo calcolare $R$ come:
+A questo punto, avendo i valori ottimali di $s$ e di $o$, possiamo calcolare $R$ come:
 
 \[
 R = \frac{1}{n} \left[ \sum\limits_{i=1}^{n}{b_i^2} 
@@ -287,7 +287,7 @@ R = \frac{1}{n} \left[ \sum\limits_{i=1}^{n}{b_i^2}
 + o \left( no - 2 \sum\limits_{i=1}^{n}{b_i} \right)  \right]
 \]
 
-Sotto queste condizioni la distanza tra le due immagini equivale a $\sqrt{R}$.
+la distanza tra le due immagini $A$ e $B$ è ora equivalente a $\sqrt{R}$.
 
 \subsection*{Partizionare le immagini}
 
