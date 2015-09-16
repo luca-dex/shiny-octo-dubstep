@@ -688,11 +688,11 @@ Andando a zoomare su un particolare dell'immagine, appare evidente come il rappo
 
 \chapter{Tutorial per l'esecuzione del codice sorgente}
 
-In questa appendice daremo una breve descrizione di come utilizzare il codice sorgente con cui sono stati realizzati gli esempi e i bechmarcks utilizzati nei vari capitoli di questo documento. 
+In questa appendice diamo una breve descrizione di come utilizzare il codice sorgente con cui sono stati realizzati gli esempi e i bechmarks utilizzati nel corso dell'esposizione. 
 
-Per l'esecuzione del codice MATLAB è necessario che sia installato il plugin \textit{Image Processing Toolbox}\footnote{\url{http://mathworks.com/products/image/}}.
+Per l'esecuzione del codice MATLAB è necessario aver installata l'\textit{Image Processing Toolbox}\footnote{\url{mathworks.com/products/image/}}.
 
-Per l'esecuzione dei benchmark è necessario che siano installati sul sistema \textit{ImageMagick}\footnote{\url{http://www.imagemagick.org/}}, libreria per la manipolazione di immagini utilizzata per effettuare la compressione in formato JPEG, e \textit{Fiasco}\footnote{\url{http://github.com/l-tamas/Fiasco}}, libreria sperimentale per la compressione di immagini utilizzando FIC.
+Per l'esecuzione dei benchmarks è necessario che siano installati sul sistema \textit{ImageMagick}\footnote{\url{www.imagemagick.org/}}, libreria per la manipolazione di immagini utilizzata per effettuare la compressione in formato JPEG, e \textit{Fiasco}\footnote{\url{github.com/l-tamas/Fiasco}}, libreria sperimentale per la compressione di immagini utilizzando FIC.
 
 \noindent La prima cosa da fare è clonare il repository che contiene tutti i sorgenti:
 \shellcmd{git clone https://github.com/luca-dex/shiny-octo-dubstep}
@@ -709,24 +709,35 @@ Il contenuto della cartella è organizzato nel seguente modo:
 
 \section{Implementazione MATLAB}
 
-Il codice MATLAB è progettato per essere eseguito in maniera parallela su una macchina quad-core. La prima parte dell'algoritmo è l'encoding dell'immagine. Tutto il setting dei parametri iniziali avviene all'interno del file \texttt{main.m}. I parametri che è possibile configurare sono:
+Il codice MATLAB è progettato per essere eseguito in maniera parallela su una macchina dotata di almeno quattro cores. La prima parte del codice effettua l'encoding dell'immagine. L'impostazione di tutti i parametri iniziali avviene all'interno del file \texttt{main.m}. I parametri che è possibile configurare sono:
 
 \begin{itemize}
-\item \texttt{im} Path dell'immagine da comprimere, che deve essere quadrata ed in formato BMP
-\item \texttt{dom\_range} Dimensione degli elementi che verranno salvati nel dominio. Devono essere divisori della lunghezza del lato dell'immagine
-\item \texttt{l} Parametro di sovrapposizione. Il default è 2
-\item \texttt{min\_rms} La soglia di errore oltre la quale si accetta la copertura selezionata
-\item \texttt{max\_range} La soglia di errore oltre la quale si rifiuta la copertura selezionata e si riapplica quadtree 
-\item \texttt{output} Path dell'output dell'algoritmo (workspace MATLAB).
+\item \texttt{im}: Path dell'immagine da comprimere, che deve essere quadrata ed in formato BMP
+\item \texttt{dom\_range}: Dimensione degli elementi che verranno salvati nel dominio. Devono essere divisori della lunghezza del lato dell'immagine
+\item \texttt{l}: Parametro di sovrapposizione. Il default è 2
+\item \texttt{min\_rms}: La soglia di errore oltre la quale si accetta la copertura selezionata
+\item \texttt{max\_range}: La soglia di errore oltre la quale si rifiuta la copertura selezionata e si riapplica la suddivisione in 4 parti 
+\item \texttt{output}: Path dell'output dell'algoritmo (workspace MATLAB).
 \end{itemize}
 
-Una volta che tutti i parametri sono configurati può essere lanciato l'algoritmo. Il tempo di esecuzione è molto alto, in quanto non sono presenti ottimizzazioni particolari, oltre alla parallelizzazione dell'esecuzione. Consigliamo quindi di non eccedere con la dimensione delle immagini.
+Una volta che tutti i parametri sono stati configurati, l'esecuzione può essere lanciata. Il tempo di calcolo è molto alto, poiché il codice non è stato sviluppato in maniera ottimizzata. È quindi Consigliato di non eccedere con la dimensione delle immagini (512 $\times$ 512 è il limite oltre il quale il codice non è stato testato).
 
-Una volta che l'immagine è compressa può essere ricostruita con la funzione \texttt{decode\_all}. Dentro a questa funzione deve essere configurato il parametro \texttt{workspace} con il path del workspace salvato dalla funzione precedente. Questa funzione mostra per prima cosa l'immagine originale e, ogni volta che viene eseguito un click all'interno dell'immagine viene mostrato uno step di ricostruzione.
+Una volta che l'immagine è stata compressa, può essere ricostruita con la funzione \texttt{decode\_all}. Dentro a questa funzione deve essere configurato il parametro \texttt{workspace}, con il path del workspace salvato dalla funzione precedente. Questa funzione mostra per prima cosa l'immagine originale e, ogni volta che viene effettuato un click del mouse all'interno dell'immagine, mostra lo step di ricostruzione successivo.
 
 \section{Benchmark}
 
+La \emph{repository} contiene anche gli script bash che sono stati utilizzati per i test (cartella \texttt{benchmarks}). Le immagini di test sono contenute nella sotto-cartella denominata \texttt{images}. Per lanciare i test, è necessario eseguire i seguenti script, in ordine:
 
+\begin{enumerate}
+\item \texttt{convert2pgm.sh}, che converte le immagini di test in formato \texttt{pgm}, l'unico supportato da Fiasco
+\item \texttt{encode2fiasco.sh}, che comprime le immagini \texttt{pgm} create al passo precedente utilizzando Fiasco
+\item \texttt{encode2jpeg.sh}, che comprile le immagini di test utilizzando JPEG
+\item \texttt{decodefiasco.sh}, che decodifica e decomprime le immagini compresse tramite frattali
+\end{enumerate}
+
+Tutti i risultati delle computazioni vengono salvati in una propria cartella, che i vari script si occupano di creare e popolare. La velocità  delle operazioni di compressione è misurata in automatico dai relativi script utilizzando il comando UNIX \texttt{time}.
+
+Gli script sono stati sviluppati, testati ed eseguiti in ambiente Linux.
 
  
 
