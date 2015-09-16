@@ -706,7 +706,7 @@ Non è facile, in generale, valutare in maniera oggettiva la qualità di due imm
 \caption{ Da JPEG e da Fiasco, rispettivamente, dopo la decompressione }
 \end{figure}
 
-Andando a zoomare su un particolare dell'immagine, appare evidente come il rapporto di compressione ottenuto da Fiasco sia ottenuto al costo di una grossa perdita di dettaglio.
+Andando a zoomare su un particolare dell'immagine, appare evidente come il rapporto di compressione ottenuto da Fiasco sia ottenuto al costo di una grossa perdita di dettaglio. Se avessimo deciso di codificare le immagini JPEG con una minore qualità (controllabile in fase di encoding tramite un parametro standard), probabilmente anche queste ultime avrebbero presentato un minor livello di dettaglio, ma il rapporto di compressione sarebbe aumentato notevolmente. Per quanto concerne questo test, abbiamo deciso di codificare le immagini in alta qualità, lasciando il parametro di input al valore standard applicato dalle librerie comunemente utilizzate.
 
 \begin{figure}[!ht]
   \centering
@@ -726,7 +726,13 @@ Andando a zoomare su un particolare dell'immagine, appare evidente come il rappo
     \caption{ Da JPEG e da Fiasco, rispettivamente, dopo la decompressione (dettaglio)}
 \end{figure}
 
+\FloatBarrier
+
 \section{Conclusioni}
+
+In questo capitolo abbiamo confrontato efficienza, efficacia e risultato finale della codifica di immagini tramite frattali e della codifica tramite lo standard JPEG. Sulle immagini che sono effettivamente alla portata di un metodo di compressione frattale, Fiasco consente di effettuare una compressione di circa un ordine di grandezza migliore di quella garantita da JPEG. Nonostante la qualità finale delle immagini dopo la decodifica sia non eccellente (rispetto a quella JPEG), l'aspetto delle immagini ricostruite è buono, soprattutto considerando il rapporto di compressione raggiunto. Un'osservazione attenta dei particolari delle immagini rivela una buona perdita di qualità, ma le immagini, nel loro complesso, non presentano artefatti troppo evidenti.
+
+Il costo computazionale del processo di codifica è senza dubbio il punto debole delle tecniche di compressione frattale. Mentre il tempo necessario per la compressione JPEG scala in maniera lineare con le dimensioni dell'immagine, quello impiegato da Fiasco aumenta in maniera esponenziale all'aumentare delle dimensioni, arrivando ad essere di 3 ordini di grandezza peggiore per un'immagine dalle (modeste) dimensioni di 1200 $\times$ 900. Tale inefficienza previene inoltre l'utilizzo della tecnica con immagini in alta definizione, che sono semplicemente fuori dalla portata delle tecniche di compressione frattale (anche rilassando i requisiti di qualità).
 
 \appendix
 
@@ -739,21 +745,22 @@ Per l'esecuzione del codice MATLAB è necessario aver installata l'\emph{Image P
 Per l'esecuzione dei benchmarks è necessario che siano installati sul sistema \emph{ImageMagick}\footnote{\url{www.imagemagick.org/}}, libreria per la manipolazione di immagini utilizzata per effettuare la compressione in formato JPEG, e Fiasco\footnote{\url{github.com/l-tamas/Fiasco}}, libreria sperimentale per la compressione di immagini utilizzando FIC.
 
 \noindent La prima cosa da fare è clonare il repository che contiene tutti i sorgenti:
-\shellcmd{git clone https://github.com/luca-dex/shiny-octo-dubstep}
+\begin{verbatim}
+git clone https://github.com/luca-dex/shiny-octo-dubstep
+\end{verbatim}
 
 Il contenuto della cartella è organizzato nel seguente modo:
 
 \begin{itemize}
-\item \texttt{src/} Contiene i sorgenti dell'algoritmo implementato in MATLAB
-\item \texttt{benchmarks} Contiene gli script per eseguire i benchmarks
-\item \texttt{doc/} Contiene il sorgente da cui è stato realizzato questo documento
-\item \texttt{workspace/} Contiene esempi di immagini compresse realizzate con l'algoritmo implementato in MATLAB
-\item \texttt{images/} Contiene alcune immagini campione utilizzabili con gli algoritmi implementati
+\item \texttt{src/} contiene i sorgenti dell'algoritmo implementato in MATLAB
+\item \texttt{benchmarks} contiene gli script per eseguire i benchmarks
+\item \texttt{doc/} contiene il sorgente da cui è stato realizzato questo documento
+\item \texttt{workspace/} Ccontiene esempi di immagini compresse realizzate con l'algoritmo implementato in MATLAB
 \end{itemize}
 
 \section{Implementazione MATLAB}
 
-Il codice MATLAB è progettato per essere eseguito in maniera parallela su una macchina dotata di almeno quattro cores. La prima parte del codice effettua l'encoding dell'immagine. L'impostazione di tutti i parametri iniziali avviene all'interno del file \texttt{main.m}. I parametri che è possibile configurare sono:
+Il codice MATLAB è progettato per essere eseguito in maniera parallela su una macchina dotata di quattro cores. La prima parte del codice effettua l'encoding dell'immagine. L'impostazione di tutti i parametri iniziali avviene all'interno del file \texttt{main.m}. I parametri che è possibile configurare sono:
 
 \begin{itemize}
 \item \texttt{im}: Path dell'immagine da comprimere, che deve essere quadrata ed in formato BMP
@@ -764,11 +771,11 @@ Il codice MATLAB è progettato per essere eseguito in maniera parallela su una m
 \item \texttt{output}: Path dell'output dell'algoritmo (workspace MATLAB).
 \end{itemize}
 
-Una volta che tutti i parametri sono stati configurati, l'esecuzione può essere lanciata. Il tempo di calcolo è molto alto, poiché il codice non è stato sviluppato in maniera ottimizzata. È quindi Consigliato di non eccedere con la dimensione delle immagini (512 $\times$ 512 è il limite oltre il quale il codice non è stato testato).
+Una volta che tutti i parametri sono stati configurati, l'esecuzione può essere lanciata. Il tempo di calcolo è molto alto, poiché il codice non è stato sviluppato in maniera ottimizzata. È consigliato non eccedere con la dimensione delle immagini (512 $\times$ 512 è il limite oltre il quale il codice non è stato testato).
 
 Una volta che l'immagine è stata compressa, può essere ricostruita con la funzione \texttt{decode\_all}. Dentro a questa funzione deve essere configurato il parametro \texttt{workspace}, con il path del workspace salvato dalla funzione precedente. Questa funzione mostra per prima cosa l'immagine originale e, ogni volta che viene effettuato un click del mouse all'interno dell'immagine, mostra lo step di ricostruzione successivo.
 
-\section{Benchmark}
+\section{Benchmarks}
 
 La \emph{repository} contiene anche gli script bash che sono stati utilizzati per i test (cartella \texttt{benchmarks}). Le immagini di test sono contenute nella sotto-cartella denominata \texttt{images}. Per lanciare i test, è necessario eseguire i seguenti script, in ordine:
 
