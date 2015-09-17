@@ -41,11 +41,11 @@
 
 \chapter{Introduzione}
 
-Con il termine ``Fractal image Compression'' si va ad indicare una famiglia di tecniche di compressione di immagini (o video) basate sulle proprietà matematiche dei frattali. Tali metodi di compressione si rivelano sopra ogni altra cosa adatti a comprimere textures e immagini naturali, o, più in generale, immagini che sono caratterizzate da un elevato livello di \emph{self-similarity} (ovvero aventi delle parti che, al netto di rotazioni e ingrandimenti/riduzioni, somigliano ad altre parti dell'immagine).
+Con il termine ``Fractal image Compression'' si va ad indicare una famiglia di tecniche di compressione di immagini (o video) basate sulle proprietà matematiche dei frattali\cite{fisher}\cite{barnsley}. Tali metodi di compressione si rivelano sopra ogni altra cosa adatti a comprimere textures e immagini naturali, o, più in generale, immagini che sono caratterizzate da un elevato livello di \emph{self-similarity} (ovvero aventi delle parti che, al netto di rotazioni e ingrandimenti/riduzioni, somigliano ad altre parti dell'immagine).
 
 La compressione di immagini tramite frattali (così come altre, più diffuse, ad esempio JPEG) appartiene a quel gruppo di tecniche di compressione \emph{lossy}, ovvero in cui la compressione dell'immagine avviene al costo di una perdita di informazione. Tuttavia, a differenza di quanto accade quando si utilizza uno dei metodi di compressione basati sui pixel (come JPEG, GIF o MPEG), nella compressione frattale nessuna parte dell'immagine viene effettivamente memorizzata. Ciò che viene memorizzato è invece la \emph{struttura interna} dell'immagine (ad esempio un indice di quali parti, effettuate le dovute trasformazioni, sono simili ad altre parti). 
 
-Poiché nessun pixel dell'immagine originale viene memorizzato, la decompressione parte da un singolo pixel, di colore qualsiasi, e procede alla ricostruzione dell'immagine originale applicando iterativamente una mappa ricavata dalla struttura interna dell'immagine originale.
+Poiché nessun pixel dell'immagine originale viene memorizzato, la decompressione parte da una immagine di partenza, di colore qualsiasi e proporzioni pari a quella dell'immagine da ricostruire, e procede con la ricostruzione applicando iterativamente una mappa ricavata dalla struttura interna dell'immagine originale.
 
 In questo documento tratteremo delle tecniche di compressione di immagini basate su frattali, iniziando con una panoramica teorica del loro funzionamento, proseguendo con la discussione di alcuni aspetti pratici e presentando una implementazione giocattolo realizzata in MATLAB, e concludendo infine con alcuni test che consentiranno di valutare praticità e \emph{performances} di una libreria di compressione basata su frattali, anche in confronto con altre tecniche di compressione \emph{lossy} maggiormente utilizzate.
 
@@ -58,7 +58,7 @@ Un frattale è un oggetto geometrico che si ripete nella sua forma, allo stesso 
 \begin{itemize}
 \item $F$ ha dettagli ad ogni scala d'ingrandimento;
 \item $F$ gode di autosimilitudine (a qualunque scala si osservi, presenta sempre le stesse caratteristiche globali);
-\item la dimensione frattale\footnote{La dimensione frattale è un rapporto che fornisce un indice statistico relativo a come varia la complessità di un frattale rispetto alla scala a cui viene misurato.} di $F$ è maggiore della sua dimensione topologica\footnote{La dimensione topologica è un concetto di dimensione che si applica ad uno spazio topologico, ad esempio in $\mathbb{R}^n$ è $n$.};
+\item la dimensione frattale\footnote{La dimensione frattale è un rapporto che fornisce un indice statistico relativo a come varia la complessità di un frattale rispetto alla scala a cui viene misurato.} di $F$ è maggiore della sua dimensione topologica\footnote{Ad esempio in $\mathbb{R}^n$ è $n$.};
 \item esiste un algoritmo relativamente semplice per costruire $F$.
 \end{itemize}
 
@@ -137,7 +137,7 @@ La seconda di queste proprietà è nota come \emph{Contractive Mapping Fixed-Poi
 
 Per poter applicare la teoria degli \emph{IFS} alle immagini come comunemente le intendiamo (ovvero, in sostanza, matrici di pixels rappresentati  da 1 byte -- \emph{greyscale} -- oppure più di uno -- es. RBG --), è necessario formalizzare in qualche modo il concetto di ``immagine digitale'', cercando di inserirlo in un contesto matematico che ci consenta di manipolarla utilizzando di strumenti messi a disposizione dall'algebra. Per semplicità, ci limiteremo qui a considerare le immagini in \emph{grayscale} (un singolo canale di colore, l'intensità indicata con un numero da 0 a 255).
 
-Consideriamo un'immagine in scala di grigi, memorizzata come matrice di pixel, 1 byte per ogni pixel. Non è difficile immaginare di poter rappresentare tale immagine utilizzando una funzione $f: \mathbb{R}^2 \rightarrow  \{1, 2, \ldots, 255 \}$, in modo tale che ad ogni pixel alle coordinate $(x, y)$ sia fatto corrispondere un punto $(x, y)$ nel piano, al quale a sua volta viene associata un'altezza $z$, che corrisponde al valore di grigio del pixel in questione. 
+Consideriamo un'immagine in scala di grigi, memorizzata come matrice di pixel, 1 byte per ogni pixel. Non è difficile immaginare di poter rappresentare tale immagine utilizzando una funzione $f: \mathbb{R}^2 \rightarrow  \{0, 1, \ldots, 255 \}$, in modo tale che ad ogni pixel alle coordinate $(x, y)$ sia fatto corrispondere un punto $(x, y)$ nel piano, al quale a sua volta viene associata un'altezza $z$, che corrisponde al valore di grigio del pixel in questione. 
 
 Ad esempio, ad un'immagine con il primo pixel in basso a sinistra avente livello di grigio 177, viene fatta corrispondere una funzione $f$ che, per quanto riguarda quel preciso punto, avrà $f(0,0) = 177$. Effettuando questa operazione su tutti i pixel dell'immagine originale, è possibile definire completamente $f$ su tutta la parte del piano di nostro interesse (e, in genere, si riduce per convenzione l'immagine ad avere dominio 
 $[0, 1]^2$). Nella figura qui sotto riportata si può vedere un esempio del risultato finale della procedura, applicata ad una immagine grayscale $128 \times 128$ pixels.
@@ -360,7 +360,7 @@ La procedura \textproc{score} restituisce una trasformazione $w_i$ ed uno $score
 
 \chapter{Aspetti Pratici e implementazione}
 
-In questo capitolo forniamo un'implementazione didattica dell'algoritmo di compressione usando frattali per permettere di comprenderne gli aspetti pratici . Il codice è stato scritto in linguaggio MATLAB ed è disponibile all'indirizzo \url{github.com/luca-dex/shiny-octo-dubstep}.
+In questo capitolo forniamo un'implementazione didattica dell'algoritmo di compressione usando frattali per permettere di comprenderne gli aspetti pratici. Il codice è stato scritto in linguaggio MATLAB ed è disponibile all'indirizzo \url{http://github.com/luca-dex/shiny-octo-dubstep}.
 
 \section{Creazione del Dominio}
 
@@ -732,7 +732,7 @@ Andando a zoomare su un particolare dell'immagine, appare evidente come il rappo
 
 In questo capitolo abbiamo confrontato efficienza, efficacia e risultato finale della codifica di immagini tramite frattali e della codifica tramite lo standard JPEG. Sulle immagini che sono effettivamente alla portata di un metodo di compressione frattale, Fiasco consente di effettuare una compressione di circa un ordine di grandezza migliore di quella garantita da JPEG. Nonostante la qualità finale delle immagini dopo la decodifica sia non eccellente (rispetto a quella JPEG), l'aspetto delle immagini ricostruite è buono, soprattutto considerando il rapporto di compressione raggiunto. Un'osservazione attenta dei particolari delle immagini rivela una buona perdita di qualità, ma le immagini, nel loro complesso, non presentano artefatti troppo evidenti.
 
-Il costo computazionale del processo di codifica è senza dubbio il punto debole delle tecniche di compressione frattale. Mentre il tempo necessario per la compressione JPEG scala in maniera lineare con le dimensioni dell'immagine, quello impiegato da Fiasco aumenta in maniera esponenziale all'aumentare delle dimensioni, arrivando ad essere di 3 ordini di grandezza peggiore per un'immagine dalle (modeste) dimensioni di 1200 $\times$ 900. Tale inefficienza previene inoltre l'utilizzo della tecnica con immagini in alta definizione, che sono semplicemente fuori dalla portata delle tecniche di compressione frattale (anche rilassando i requisiti di qualità).
+Il costo computazionale del processo di codifica è senza dubbio il punto debole delle tecniche di compressione frattale. Mentre il tempo necessario per la compressione JPEG scala in maniera lineare con le dimensioni dell'immagine, quello impiegato da Fiasco aumenta in maniera esponenziale all'aumentare delle dimensioni, arrivando ad essere di 3 ordini di grandezza peggiore per un'immagine dalle (modeste) dimensioni di 1200 $\times$ 900. Tale inefficienza previene inoltre l'utilizzo della tecnica con immagini in alta definizione.
 
 \appendix
 
@@ -791,6 +791,19 @@ Tutti i risultati delle computazioni vengono salvati in una propria cartella, ch
 Gli script sono stati sviluppati, testati ed eseguiti in ambiente Linux.
 
 \begin{thebibliography}{9}
+
+\bibitem{fisher}
+Yuval Fisher (Ed.)
+\textit{Fractal Image Compression: Theory and Application}
+Springer-Verlag, London, UK 1995.
+
+
+\bibitem{barnsley}
+Michael Barnsley.
+\textit{Fractals Everywhere.} 
+Academic Press Prof., Inc., San Diego, CA, USA 1988.
+
+
 \bibitem{fiasco}
 Ullrich Hafner
 \textit{Fractal Image And Sequence COdec}. 
