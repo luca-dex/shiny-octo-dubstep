@@ -24,6 +24,7 @@
 \newcommand{\nope}{\ding{55}}%
 
 \newtheorem{teorema}{Teorema}
+\newtheorem{definizione}{Definizione}
 \newtheorem{lemma}[teorema]{Lemma}
 \newtheorem{proposizione}[teorema]{Proposizione}
 \newtheorem{proprieta}[teorema]{Proprietà}
@@ -52,6 +53,51 @@ In questo documento tratteremo delle tecniche di compressione di immagini basate
 \chapter{Aspetti teorici}
 
 \section{Introduzione ai frattali}
+
+Iniziamo dando una definizione che sia il più possibile rigorosa del concetto di frattale, seguendo la trattazione delineata in \cite{barnsley}. Per fare questo, abbiamo bisogno di introdurre alcuni oggetti matematici, che verranno usati nel seguito. Come prima cosa:
+
+\begin{definizione}
+Uno spazio metrico $(\mathbf{X}, d)$ è uno spazio $\mathbf{X}$ a cui è associata una funzione $d: \mathbf{X} \times \mathbf{X} \rightarrow \mathbb{R}$, detta \emph{distanza}, che fornisce una misura della lontananza tra due punti $x, y \in \mathbf{X}$. $d$ deve soddisfare i seguenti assiomi:
+
+\begin{itemize}
+	\item $d(x,y) = d(y,x) \qquad \forall x, y \in \mathbf{X}$
+	\item $0 < d(x,y) < \infty \qquad \forall x,y \in \mathbf{X}, x \neq y $
+	\item $d(x,x) = 0 \qquad \forall x \in \mathbf{X} $
+	\item $d(x, y) < d(x,z) + d(z, y) \quad \forall x, y, z, \in \mathbf{X} $
+\end{itemize}
+\end{definizione}
+
+Sul concetto di spazio metrico può essere definita la nozione di \emph{compattezza}.
+
+\begin{definizione}
+Un sottoinsieme $S \subset \mathbf{X}$ di uno spazio metrico $(\mathbf{X}, d)$ si dice \emph{compatto} se ogni sequenza infinita $\{ x_n \}_{n=1}^{\infty}$ in S contiene una sottosequenza avente limite in $S$.
+\end{definizione}
+
+Si dimostra che un insieme è compatto se e solo se è chiuso e limitato. A questo punto è possibile introdurre il concetto di spazio $\mathcal{H}$:
+
+\begin{definizione}
+Sia $(\mathbf{X}, d)$ uno spazio metrico. Denotiamo con $\mathcal{H}(\mathbf{X})$ lo spazio i cui punti sono sottoinsiemi compatti di $\mathbf{X}$, escluso l'insieme vuoto.
+\end{definizione}
+
+\begin{definizione}
+Dati due elementi $A, B \in \mathcal{H}(\mathbf{X})$, si definisce \emph{distanza secondo Hausdorff} tra $A$ e $B$ come
+\[
+h(A,B) = \max\{ d(A,B), ~ d(B,A) \}
+\]
+
+dove $d$ è la definizione di distanza per lo spazio $\mathbf{X}$.
+\end{definizione}
+
+Ci riferiamo ad $(\mathcal{H}(\mathbf{X}), h) $ come allo \textbf{spazio dei frattali}. Mantenendoci al massimo livello di generalità possibile, diciamo che ogni sottoinsieme di $(\mathcal{H}(\mathbf{X}), h)$ è un \textbf{frattale}.
+
+
+
+
+
+
+
+
+
 
 Un frattale è un oggetto geometrico che si ripete nella sua forma, allo stesso modo, su diverse scale. Questo comportamento fa si che ingrandendo una sua qualsiasi componente, ciò che si ottiene è una figura simile all'originale. In linea di massima, si può dire che perché l'insieme $F$ sia considerato un frattale, $F$ dovrebbe avere almeno le seguenti proprietà:
 
@@ -797,12 +843,10 @@ Yuval Fisher (Ed.)
 \textit{Fractal Image Compression: Theory and Application}
 Springer-Verlag, London, UK 1995.
 
-
 \bibitem{barnsley}
 Michael Barnsley.
 \textit{Fractals Everywhere.} 
 Academic Press Prof., Inc., San Diego, CA, USA 1988.
-
 
 \bibitem{fiasco}
 Ullrich Hafner
