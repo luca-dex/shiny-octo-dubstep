@@ -156,7 +156,7 @@ w = Ax + b
 con $A \in R^{n \times n}$ una matrice $n \times n$ e $b \in \mathbb{R}^n$ un vettore. Nel contesto degli \emph{iterated function system}, siamo interessati a un particolare tipo di trasformazioni affini, dette \emph{contrattive}.
 
 \begin{definizione}
-Data $\Vert \cdot \Vert$  una qualunque norma in $\mathbb{R}^n$, una trasformazione $x \mapsto Ax$ si dice \emph{contrattive} se 
+Data $\Vert \cdot \Vert$  una qualunque norma in $\mathbb{R}^n$, una trasformazione $x \mapsto Ax$ si dice \emph{contrattiva} se 
 
 \[
 \Vert A \Vert = \sup_{\vec{x} \in \mathbb{R}^n} \frac{\Vert A\vec{x} \Vert}{\Vert \vec{x} \Vert } < 1
@@ -199,10 +199,9 @@ La seconda di queste proprietà è nota come \emph{Contractive Mapping Fixed-Poi
 
 Per poter applicare la teoria degli \emph{IFS} alle immagini come comunemente le intendiamo (ovvero, in sostanza, matrici di pixels rappresentati  da 1 byte -- \emph{greyscale} -- oppure più di uno -- es. RBG --), è necessario formalizzare in qualche modo il concetto di ``immagine digitale'', cercando di inserirlo in un contesto matematico che ci consenta di manipolarla utilizzando di strumenti messi a disposizione dall'algebra. Per semplicità, ci limiteremo qui a considerare le immagini in \emph{grayscale} (un singolo canale di colore, l'intensità indicata con un numero da 0 a 255).
 
-Consideriamo un'immagine in scala di grigi, memorizzata come matrice di pixel, 1 byte per ogni pixel. Non è difficile immaginare di poter rappresentare tale immagine utilizzando una funzione $f: \mathbb{R}^2 \rightarrow  \{0, 1, \ldots, 255 \}$, in modo tale che ad ogni pixel alle coordinate $(x, y)$ sia fatto corrispondere un punto $(x, y)$ nel piano, al quale a sua volta viene associata un'altezza $z$, che corrisponde al valore di grigio del pixel in questione. 
+Consideriamo un'immagine in scala di grigi, memorizzata come matrice di pixel, 1 byte per ogni pixel. Non è difficile immaginare di poter rappresentare tale immagine utilizzando una funzione $f: \mathbb{R}^2 \rightarrow  \{0, 1, \ldots, 255 \}$, in modo tale che ad ogni pixel alle coordinate $(x, y)$ sia fatto corrispondere un sottonsieme $S_{xy}$ di $[0,1]^2$, nel quale $f$ ha valore $z$, che corrisponde al valore di grigio del pixel in questione. $f$ così definita è continua a tratti, è fornisce una rappresentazione continua del concetto (discreto) di immagine \emph{grayscale}.
 
-Ad esempio, ad un'immagine con il primo pixel in basso a sinistra avente livello di grigio 177, viene fatta corrispondere una funzione $f$ che, per quanto riguarda quel preciso punto, avrà $f(0,0) = 177$. Effettuando questa operazione su tutti i pixel dell'immagine originale, è possibile definire completamente $f$ su tutta la parte del piano di nostro interesse (e, in genere, si riduce per convenzione l'immagine ad avere dominio 
-$[0, 1]^2$). Nella figura qui sotto riportata si può vedere un esempio del risultato finale della procedura, applicata ad una immagine grayscale $128 \times 128$ pixels.
+Nella figura qui sotto riportata si può vedere un esempio del risultato finale della procedura, applicata ad una immagine grayscale $128 \times 128$ pixels.
 
 \begin{figure}[!ht]
 \centering
@@ -214,12 +213,12 @@ La trasformazione descritta ci permette di ignorare l'aspetto ``visivo'' della m
 
 \subsection*{Distanza tra due immagini}
 
-Un secondo concetto che è necessario introdurre per poter operare sulle immagini durante il procedimento di compressione e decompressione è quello di ``distanza'' tra due immagini. La contrattività di una mappa $W$ (ovvero, intuitivamente, il fatto che essa rende le immagini più ``piccole'') può essere verificata solo se si ha a disposizione una qualche metrica sulla base della quale è possibile valutare la distanza tra due sottoinsiemi del piano (ovvero, nel nostro caso, due immagini).
+Un secondo concetto che è necessario introdurre per poter operare sulle immagini durante il procedimento di compressione e decompressione è quello di ``distanza'' tra due immagini. La contrattività di una mappa $W$ (ovvero, intuitivamente, il fatto che essa rende le immagini più ``piccole'') può essere verificata solo se si ha a disposizione una qualche metrica sulla base della quale è possibile valutare la distanza tra due sottoinsiemi di $\mathbb{R}^2$ (ovvero, nel nostro caso, due immagini).
 
 Date due immagini $f, g$, definiamo la loro distanza $d(f, g)$, utilizzando la media quadratica, come
 
 \[
-d(f,s) = \sqrt{\int_{[0,1]^2} f(x,y) - g(x,y) \quad \text{d}x\text{d}y }
+d(f,s) = \sqrt{\int_{[0,1]^2} \big|f(x,y) - g(x,y)\big| \quad \text{d}x\text{d}y }
 \]
 
 La metrica ci fornisce una maniera di valutare la distanza tra due immagini pesando in maniera uniforme tutti i punti in esse contenuti.
@@ -274,6 +273,8 @@ e di due parametri aggiuntivi $s_i$ ed $o_i$, che agiscono rispettivamente come 
 
 Ricordando che l'immagine è rappresentata da una funzione $z = f(x,y)$, dove $x$ ed $y$ sono pixels e $z$ il grado di grigio dell'immagine \emph{grayscale}, una singola trasformazione $w_i$ viene applicata calcolando $w_i(f) = w_i(x, y, f(x,y))$. La parte spaziale di $w_i$ determina come una sotto-parte dell'immagine è mappata su altre sottoparti, mentre $s_i$ ed $o_i$ determinano contrasto e luminosità della trasformazione.
 
+In generale, per convenienza di notazione, scriveremo $W(f)$ per denotare l'applicazione di $W$ su un sottoinsieme dello spazio in $\mathbb{R}^3$ associato alla funzione $f$ come in $(x, y, f(x,y))$.
+
 Il fatto che il mapping sia da effettuarsi da sottoinsiemi a sottoinsiemi dell'immagine è permesso dal fatto che le varie $w_i$ sono implicitamente definite in modo da operare su un sottoinsieme di $[0,1]^2$, che chiamiamo $D_i$, dando come risultato un sottoinsieme di $[0,1]^2$, che chiameremo $R_i$. In simboli, scriviamo che
 
 \[
@@ -315,7 +316,7 @@ Per ottenere questo, dovremmo procedere con il partizionare l'immagine $f$ in ta
 Quello che facciamo in pratica è cercare delle trasformazioni che, applicate, ci restituiscano un'immagine \emph{differente}, diciamo $f'$, tale per cui la distanza con l'immagine di partenza, ovvero $d(f,f')$, è piccola. Operativamente, procediamo calcolando le $w_i$ con l'obbiettivo di minimizzare la distanza tra il pezzo di immagine che stiamo attualmente considerando e il pezzo di immagine ottenuto dopo l'applicazione della trasformazione. In formula, minimizziamo
 
 \[
-d\big(f \cap (R_i \times I), w_i(f)\big) 
+d\big(f \cap (R_i \times [0,1]^2), w_i(f)\big) 
 \]
 
 per tutti gli $i$. In termini di $R_i$ ed $D_i$ (i concreti pezzi di immagini su cui andremo ad operare), dobbiamo partizionare l'immagine $f$ in una collezione di pezzi $R_i$, e cercare da una seconda collezione $D_i$ dei pezzi tali per cui la mappa da $D_i$ ad $R_i$ comporta un errore (calcolato come distanza $d$) che sia piccolo.
@@ -328,7 +329,7 @@ Come abbiamo visto, la comparazione tra le due immagini avviene tramite la radic
 R = \sum_{i=1}^{n}{\left( s \cdot a_i + o - b_i \right) }
 \]
 
-Questa quantità ci fornisce i valori di contrasto e luminosità che fanno si che la trasformazione dai i valori di $a_i$  a quelli di $b_i$ abbia la minima distanza possibile. Il valore minimo di $R$ si ha quando le derivate parziali di $s$ e di $o$ si azzerano, ovvero quando
+Questa quantità ci fornisce i valori di contrasto e luminosità che fanno sì che la trasformazione dai i valori di $a_i$  a quelli di $b_i$ abbia la minima distanza possibile. Il valore minimo di $R$ si ha quando le derivate parziali di $s$ e di $o$ si azzerano, ovvero quando
 
 \[
 s = \dfrac{ n \sum\limits_{i=1}^{n}{a_i b_i} - \sum\limits_{i=1}^{n}{a_i} \sum\limits_{i=1}^{n}{b_i} }
