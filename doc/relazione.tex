@@ -54,6 +54,8 @@ In questo documento tratteremo delle tecniche di compressione di immagini basate
 
 \section{Introduzione ai frattali}
 
+\subsection*{Definizione matematica}
+
 Iniziamo dando una definizione che sia il più possibile rigorosa del concetto di frattale, seguendo la trattazione delineata in \cite{barnsley}. Per fare questo, abbiamo bisogno di introdurre alcuni oggetti matematici, che verranno usati nel seguito. Come prima cosa:
 
 \begin{definizione}
@@ -88,18 +90,11 @@ h(A,B) = \max\{ d(A,B), ~ d(B,A) \}
 dove $d$ è la definizione di distanza per lo spazio $\mathbf{X}$.
 \end{definizione}
 
-Ci riferiamo ad $(\mathcal{H}(\mathbf{X}), h) $ come allo \textbf{spazio dei frattali}. Mantenendoci al massimo livello di generalità possibile, diciamo che ogni sottoinsieme di $(\mathcal{H}(\mathbf{X}), h)$ è un \textbf{frattale}.
+Ci riferiamo ad $(\mathcal{H}(\mathbf{X}), h)$ come allo \textbf{spazio dei frattali}. Mantenendoci al massimo livello di generalità possibile, diciamo che ogni sottoinsieme di $(\mathcal{H}(\mathbf{X}), h)$ è un \textbf{frattale}. Nella successiva sottosezione daremo una breve lista di caratteristiche che ci aspettiamo di ritrovare in un oggetto che si vuole definire ``frattale'', fornendo così una definizione meno rigorosa ma più utile in campo appplicativo di questo elusivo concetto.
 
+\subsection*{Caratteristiche intuitive}
 
-
-
-
-
-
-
-
-
-Un frattale è un oggetto geometrico che si ripete nella sua forma, allo stesso modo, su diverse scale. Questo comportamento fa si che ingrandendo una sua qualsiasi componente, ciò che si ottiene è una figura simile all'originale. In linea di massima, si può dire che perché l'insieme $F$ sia considerato un frattale, $F$ dovrebbe avere almeno le seguenti proprietà:
+Ci aspettiamo che un frattale sia un oggetto geometrico che si ripete nella sua forma, allo stesso modo, su diverse scale. Questo comportamento fa si che ingrandendo una sua qualsiasi componente, ciò che si ottiene è una figura simile all'originale. In linea di massima, si può dire che perché l'insieme $F \subseteq (\mathcal{H}(\mathbf{X}), h)$ sia considerato un frattale, dovrebbe godere di (alcune) delle seguenti proprietà:
 
 \begin{itemize}
 \item $F$ ha dettagli ad ogni scala d'ingrandimento;
