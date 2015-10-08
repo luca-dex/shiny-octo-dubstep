@@ -46,7 +46,9 @@ Con il termine ``Fractal image Compression'' si va ad indicare una famiglia di t
 
 La compressione di immagini tramite frattali (così come altre, più diffuse, ad esempio JPEG) appartiene a quel gruppo di tecniche di compressione \emph{lossy}, ovvero in cui la compressione dell'immagine avviene al costo di una perdita di informazione. Tuttavia, a differenza di quanto accade quando si utilizza uno dei metodi di compressione basati sui pixel (come JPEG, GIF o MPEG), nella compressione frattale nessuna parte dell'immagine viene effettivamente memorizzata. Ciò che viene memorizzato è invece la \emph{struttura interna} dell'immagine (ad esempio un indice di quali parti, effettuate le dovute trasformazioni, sono simili ad altre parti). 
 
-Poiché nessun pixel dell'immagine originale viene memorizzato, la decompressione parte da una immagine di partenza, di colore qualsiasi e proporzioni pari a quella dell'immagine da ricostruire, e procede con la ricostruzione applicando iterativamente una mappa ricavata dalla struttura interna dell'immagine originale.
+In breve, nel contesto della compressione frattale, lo scopo della fase di codifica è quello di trovare una trasformazione affine avente come punto fisso l'immagine che si vuole comprimere. Tale trasformazione è ciò che viene effettivamente memorizzato, e rappresenta una maniera compatta di immagazzinare l'immagine di partenza.
+
+Successivamente, in fase di decompressione, tutto ciò che è necessario fare per ri-ottenere la figura di partenza è partire da una immagine di colore uniforme, e procedere con la ricostruzione applicandovi iterativamente la trasformazione sopracitata.
 
 In questo documento tratteremo delle tecniche di compressione di immagini basate su frattali, iniziando con una panoramica teorica del loro funzionamento, proseguendo con la discussione di alcuni aspetti pratici e presentando una implementazione giocattolo realizzata in MATLAB, e concludendo infine con alcuni test che consentiranno di valutare praticità e \emph{performances} di una libreria di compressione basata su frattali, anche in confronto con altre tecniche di compressione \emph{lossy} maggiormente utilizzate.
 
@@ -139,34 +141,53 @@ Una volta che la procedura è avviata può proseguire a piacimento. Il terzo e i
 \label{fig:k4}
 \end{figure}
 
-
-
 \section{Iterated Function Systems}
 
-Uno strumento matematico che si rivelerà fondamentale nella fase di decompressione delle immagini trattate con un metodo di compressione frattale è quello degli \emph{Iterated Function Systems}, che andiamo per questo motivo a descrivere qui.
+Come già accennato nell'introduzione, uno strumento matematico che si rivelerà fondamentale nella fase di decompressione delle immagini trattate con un metodo di compressione frattale è quello degli \emph{Iterated Function Systems}, che andiamo per questo motivo a descrivere qui, seguendo la trattazione contenuta in \cite{fisher}.
 
-Senza eccedere in formalità, definiamo un \emph{Iterated Function System} (IFS) come una collezione di trasformazioni contrattive $\{w_i : \mathbb{R}^2 \rightarrow \mathbb{R}^2 \}_{i=1,\ldots, n}$ che mappa il piano su se stesso. Questa collezione di trasformazioni definisce una mappa 
+\subsection*{Trasformazioni affini}
+
+Con \emph{trasformazione affine} andiamo ad indicare una mappa $w: \mathbb{R}^n \rightarrow \mathbb{R}^n$ che può sempre essere scritta come
 
 \[
-W(\cdot) = \bigcup_{i=1}^{n} w_i(\cdot)
+w = Ax + b
 \]
 
-Tale mappa è applicata ad insiemi di punti, ed il risultato è definito in questa maniera: dato un insieme di punti $S \in \mathbb{R}^2$, calcoliamo $w_i(S)$ per ogni $i$ (ovvero produciamo $i$ copie ridotte di $S$), e poi calcoliamo l'unione dei risultati (ovvero, mettiamo insieme tutte le copie ridotte), ottenendo così un nuovo insieme $S' = W(S)$.
+con $A \in R^{n \times n}$ una matrice $n \times n$ e $b \in \mathbb{R}^n$ un vettore. Nel contesto degli \emph{iterated function system}, siamo interessati a un particolare tipo di trasformazioni affini, dette \emph{contrattive}.
 
-$W$ così definito è una mappa tra sottoinsiemi di $\mathbb{R}^2$ (che d'ora in avanti per noi saranno ``immagini''), e gode di due importanti (e rilevanti per la compressione frattale) proprietà, che andiamo ad enunciare senza dimostrazione.
+\begin{definizione}
+Data $\Vert \cdot \Vert$  una qualunque norma in $\mathbb{R}^n$, una trasformazione $x \mapsto Ax$ si dice \emph{contrattive} se 
+
+\[
+\Vert A \Vert = \sup_{\vec{x} \in \mathbb{R}^n} \frac{\Vert A\vec{x} \Vert}{\Vert \vec{x} \Vert } < 1
+\]
+\end{definizione}
+
+\subsection*{IFS}
+
+Senza eccedere in formalità, definiamo un \emph{Iterated Function System} (IFS) come una collezione di $m$ trasformazioni contrattive affini $\{w_i : \mathbb{R}^n \rightarrow \mathbb{R}^n \}_{i=1,\ldots, m}$ che mappa uno spazio euclideo su se stesso. Questa collezione di trasformazioni può essere usata, genericamente, per definire una mappa 
+
+\[
+W(\cdot) = \bigcup_{i=1}^{m} w_i(\cdot)
+\]
+
+Tale mappa è applicata ad insiemi di punti, ed il risultato è definito in questa maniera: dato un insieme di punti $S \in \mathbb{R}^n$, calcoliamo $w_i(S)$ per ogni $i$ (ovvero produciamo $i$ copie ridotte di $S$), e poi calcoliamo l'unione dei risultati (ovvero, mettiamo insieme tutte le copie ridotte), ottenendo così un nuovo insieme $S' = W(S)$.
+
+$W$ così definito è una mappa tra sottoinsiemi di $\mathbb{R}^n$ e gode di due importanti (e rilevanti per la compressione frattale) proprietà, che andiamo ad enunciare senza dimostrazione.
 
 \begin{proprieta}
-Se tutte le $w_i$ sono contrattive, allora $W$ è contrattiva in uno spazio di sottoinsiemi del piano.
+Se tutte le $w_i$ sono contrattive, allora $W$ è contrattiva in uno spazio di sottoinsiemi dello spazio.
 \end{proprieta}
 
 \begin{proprieta}
-Fissata una mappa $W$, esiste una immagine $x_W$, chiamata \emph{attrattore per $W$}, tale che
+Fissata una mappa $W$, esiste un sottoinsieme di punti $x_W \in \mathbb{R}^n$, chiamato \emph{attrattore per $W$}, tale che
 \begin{itemize}
 \item $W(x_W) = x_W$
-\item data una qualunque immagine di partenza $S_0$, vale che 
-\[x_W \equiv \lim_{n \rightarrow \infty} W^{n}(S_0) \]
-ovvero l'applicazione ripetuta per $n$ volte di $W$ porta ad ottenere $x_W$, per $n$ sufficientemente grande, ed indipendentemente dalla scelta dell'immagine di partenza.
-\item $x_W$ è unica. Se una qualsiasi immagine $S$ soddisfa $W(S) = S$, allora $S$ è l'attrattore per $W$.
+\item data un qualunque sottoinsieme di partenza $S_0$, vale che 
+\[x_W \equiv \lim_{k \rightarrow \infty} W^{k}(S_0) \]
+dove il limite si intende preso su una qualunque metrica euclidea definita sullo spazio in analisi.
+Questa proprietà evidenzia che applicazione ripetuta per $k$ volte di $W$ porta ad ottenere $x_W$, per $k$ sufficientemente grande, ed indipendentemente dalla scelta del sottoinsieme di partenza.
+\item $x_W$ è unica. Se un sottoinsieme qualunque $S$ soddisfa $W(S) = S$, allora $S$ è l'attrattore per $W$.
 \end{itemize}
 \end{proprieta}
 
